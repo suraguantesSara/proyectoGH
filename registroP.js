@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // URL de tu Web App de Google Apps Script
-    fetch("https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec", {
+    fetch("https://script.google.com/macros/s/AKfycbzSLn0oZGqUpaCH6OTER1UqaUBP3CEr524TKAQiyiEXBNjL-97hltQLclu-23CV2Lzucg/exec", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
