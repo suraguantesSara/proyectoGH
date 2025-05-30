@@ -8,42 +8,52 @@
 </head>
 <body>
 
-  <!-- Encabezado -->
+  <!-- Top Bar fijo -->
   <header class="top-bar">
     <h1>Registro de Producción Diaria</h1>
   </header>
 
-  <!-- Contenedor del formulario -->
-  <div class="container">
-    <h2>Trabajador: <span id="workerNameDisplay"></span></h2>
-    <form id="productionForm">
-      <label for="date">Fecha</label>
-      <input type="date" id="date" required />
+  <div class="wrapper">
+    <!-- Menú lateral sin enlaces a otras páginas -->
+    <aside class="sidebar">
+      <div class="profile-container">
+        <img src="https://www.w3schools.com/howto/img_avatar.png" alt="Avatar">
+        <p id="workerInSidebar">—</p>
+      </div>
+      <h2>Trabajadores</h2>
+      <ul id="workerList"></ul>
+    </aside>
 
-      <table id="productionTable">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Cantidad</th>
-            <th>Valor unitario</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- 15 filas se generan mediante JS -->
-        </tbody>
-      </table>
+    <!-- Contenido principal -->
+    <main class="content">
+      <div class="form-header">
+        <h2>Trabajador: <span id="workerNameDisplay">—</span></h2>
+        <div class="date-picker">
+          <label for="dateInput">Fecha:</label>
+          <input type="date" id="dateInput">
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table id="productionTable">
+          <thead>
+            <tr>
+              <th>#</th><th>Cantidad</th><th>Valor unitario</th><th>Total</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
 
       <div class="total-row">
         <span>Total General:</span>
         <strong id="grandTotal">0.00</strong>
       </div>
 
-      <button type="submit" class="btn-save">
-        Guardar Registro
-      </button>
-    </form>
+      <button id="saveBtn" class="btn-save">Guardar Registro</button>
+    </main>
   </div>
+
 
   <script src="registroP.js"></script>
 </body>
