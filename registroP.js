@@ -85,22 +85,31 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // URL de tu Web App de Google Apps Script
-    fetch("https://script.google.com/macros/s/AKfycbzSLn0oZGqUpaCH6OTER1UqaUBP3CEr524TKAQiyiEXBNjL-97hltQLclu-23CV2Lzucg/exec", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    })
-    .then(() => {
-      alert("Registro guardado correctamente.");
-      // reset form
-      dateInput.value = new Date().toISOString().slice(0,10);
-      tbody.querySelectorAll("tr").forEach(r => {
-        r.cells[1].firstChild.value = 0;
-        r.cells[2].firstChild.value = 0;
-        r.cells[3].textContent     = "0.00";
-      });
-      updateGrandTotal();
-    })
-    .catch(err => alert("Error al guardar: " + err));
+const url = "https://script.google.com/macros/s/TU_URL_CORRECTA/exec"; // Asegúrate de que sea la URL correcta
+
+fetch(url, {
+  method: "POST",
+  mode:   "no-cors",  // Evita bloqueos por CORS
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(payload)
+})
+  .then(() => {
+    alert("Registro guardado correctamente.");
+    resetForm();
+  })
+  .catch(err => {
+    console.error("Error en la conexión:", err);
+    alert("Error al enviar datos. Verifica la URL y los permisos en Apps Script.");
   });
-});
+
+// Función para reiniciar el formulario
+function resetForm() {
+  document.getElementById("dateInput").value = new Date().toISOString().slice(0,10);
+  const tbody = document.querySelector("#productionTable tbody");
+  tbody.querySelectorAll("tr").forEach(r => {
+    r.cells[1].firstChild.value = 0;
+    r.cells[2].firstChild.value = 0;
+    r.cells[3].textContent = "0.00";
+  });
+  document.getElementById("grandTotal").textContent = "0.00";
+}
