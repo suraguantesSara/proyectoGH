@@ -8,14 +8,16 @@
 </head>
 <body>
 
+  <!-- Encabezado -->
   <header class="top-bar">
     <h1>Registro de Producción Diaria</h1>
   </header>
 
+  <!-- Contenedor del formulario -->
   <div class="container">
     <h2>Trabajador: <span id="workerNameDisplay"></span></h2>
     <form id="productionForm">
-      <label for="date">Fecha:</label>
+      <label for="date">Fecha</label>
       <input type="date" id="date" required />
 
       <table id="productionTable">
@@ -28,12 +30,18 @@
           </tr>
         </thead>
         <tbody>
-          <!-- 15 filas opcionales -->
+          <!-- 15 filas se generan mediante JS -->
         </tbody>
       </table>
 
-      <h3>Total General: <span id="grandTotal">0.00</span></h3>
-      <button type="submit">Guardar Registro</button>
+      <div class="total-row">
+        <span>Total General:</span>
+        <strong id="grandTotal">0.00</strong>
+      </div>
+
+      <button type="submit" class="btn-save">
+        Guardar Registro
+      </button>
     </form>
   </div>
 
