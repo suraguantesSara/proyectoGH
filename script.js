@@ -86,77 +86,20 @@ workers.forEach(w => {
   workerList.appendChild(li);
 });
 
-// ---------------------------------------------------------------------
-// SU SELECCIÓN DE TRABAJADOR
-// ---------------------------------------------------------------------
-const workerList   = document.getElementById("workerList");
-const workerNameEl = document.getElementById("workerName");
-const workerAreaEl = document.getElementById("workerArea");
-const workerImg    = document.getElementById("workerImg");
-const profileCard  = document.querySelector(".profile");
-const optionsBar   = document.querySelector(".options");
-
-const workers = [
-  { nombre: "Luis Oliveros",    area: "Volteado", genero: "hombre" },
-  { nombre: "Fernando Arias",    area: "Volteado", genero: "hombre" },
-  { nombre: "Jesus Arteaga",     area: "Volteado", genero: "hombre" },
-  { nombre: "David Parra",       area: "Volteado", genero: "hombre" },
-  { nombre: "Alex (nuevo)",      area: "Volteado", genero: "hombre" },
-  { nombre: "Nataly Rodriguez",  area: "Cerrado",  genero: "mujer"  },
-  { nombre: "Gustavo Alvarado",  area: "Cerrado",  genero: "hombre" },
-  { nombre: "Carlos Caicedo",    area: "Cerrado",  genero: "hombre" },
-  { nombre: "Kevin Lozano",      area: "Cerrado",  genero: "hombre" },
-  { nombre: "Angela Pacheco",    area: "Cerrado",  genero: "mujer"  },
-  { nombre: "Liliana Diaz",      area: "Armado",   genero: "mujer"  },
-  { nombre: "Claudia Gonzales",  area: "Armado",   genero: "mujer"  },
-  { nombre: "Johanna Zuñiga",    area: "Armado",   genero: "mujer"  },
-  { nombre: "Solveida Gesama",   area: "Armado",   genero: "mujer"  },
-  { nombre: "Nancy Arias",       area: "Armado",   genero: "mujer"  },
-  { nombre: "Karolie Luna",      area: "Armado",   genero: "mujer"  },
-  { nombre: "Amanda Cardona",    area: "Armado",   genero: "mujer"  },
-  { nombre: "Alexander Moran",   area: "Armado",   genero: "hombre" },
-  { nombre: "Blanca Andrade",    area: "Armado",   genero: "mujer"  }
- 
-];
-
-// 1. Poblar el menú lateral
-workers.forEach(w => {
-  const li = document.createElement("li");
-  li.textContent = w.nombre;
-  li.onclick = () => selectWorker(w);
-  workerList.appendChild(li);
-});
-
-// 2. Al seleccionar un trabajador:
-function selectWorker(w) {
-  // Actualizo UI
-  workerNameEl.textContent = w.nombre;
-  workerAreaEl.textContent = "Área: " + w.area;
-  workerImg.src = w.genero === "hombre"
+// Selecciona un trabajador, actualiza UI y guarda en localStorage
+function selectWorker(worker) {
+  // Actualiza la UI
+  workerName.textContent = worker.nombre;
+  workerArea.textContent = `Área: ${worker.area}`;
+  workerImg.src = worker.genero === "hombre"
     ? "https://www.w3schools.com/howto/img_avatar.png"
     : "https://www.w3schools.com/howto/img_avatar2.png";
+  profile.style.display = "block";
+  options.style.display = "block";
 
-  profileCard.style.display = "block";
-  optionsBar.style.display  = "block";
-
-  // Guardo en localStorage
-  localStorage.setItem("selectedWorker", w.nombre);
+  // Guarda selección para la página de registro
+  localStorage.setItem("selectedWorker", worker.nombre);
 }
-
-// 3. Al pulsar “Registro de producción diaria” redirijo pasando el nombre
-function registerProduction() {
-  const nombre = localStorage.getItem("selectedWorker");
-  if (!nombre) {
-    alert("Selecciona un trabajador primero.");
-    return;
-  }
-  // paso el nombre como parámetro en la URL
-  const url = "registroP.html?worker=" + encodeURIComponent(nombre);
-  // uso replace para que el botón atrás no vuelva a index.html
-  window.location.replace(url);
-}
-
-// (resto de funciones: viewData, checkEfficiency, generateReport, login, admin…)
 
 // Intento de restaurar selección al cargar la página
 window.addEventListener("DOMContentLoaded", () => {
