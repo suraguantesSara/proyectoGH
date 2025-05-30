@@ -1,106 +1,123 @@
+// ─── ELEMENTOS DOM ─────────────────────────────────────────────────────────────
+const loginPanel     = document.getElementById("loginPanel");
+const adminPanel     = document.getElementById("adminPanel");
+const adminBtn       = document.getElementById("adminBtn");
+const welcomeMessage = document.getElementById("welcomeMessage");
+
+const workerListEl   = document.getElementById("workerList");
+const profileCard    = document.querySelector(".profile");
+const optionsBar     = document.querySelector(".options");
+const workerNameEl   = document.getElementById("workerName");
+const workerAreaEl   = document.getElementById("workerArea");
+const workerImgEl    = document.getElementById("workerImg");
+
+// ─── DATOS DE TRABAJADORES ──────────────────────────────────────────────────────
+const workers = [
+  { nombre: "Luis Oliveros",    area: "Volteado", genero: "hombre" },
+  { nombre: "Fernando Arias",   area: "Volteado", genero: "hombre" },
+  { nombre: "Jesus Arteaga",    area: "Volteado", genero: "hombre" },
+  { nombre: "David Parra",      area: "Volteado", genero: "hombre" },
+  { nombre: "Alex (nuevo)",     area: "Volteado", genero: "hombre" },
+  { nombre: "Nataly Rodriguez", area: "Cerrado",  genero: "mujer"  },
+  { nombre: "Gustavo Alvarado", area: "Cerrado",  genero: "hombre" },
+  { nombre: "Carlos Caicedo",   area: "Cerrado",  genero: "hombre" },
+  { nombre: "Kevin Lozano",     area: "Cerrado",  genero: "hombre" },
+  { nombre: "Angela Pacheco",   area: "Cerrado",  genero: "mujer"  },
+  { nombre: "Liliana Diaz",     area: "Armado",   genero: "mujer"  },
+  { nombre: "Claudia Gonzales", area: "Armado",   genero: "mujer"  },
+  { nombre: "Johanna Zuñiga",   area: "Armado",   genero: "mujer"  },
+  { nombre: "Solveida Gesama",  area: "Armado",   genero: "mujer"  },
+  { nombre: "Nancy Arias",      area: "Armado",   genero: "mujer"  },
+  { nombre: "Karolie Luna",     area: "Armado",   genero: "mujer"  },
+  { nombre: "Amanda Cardona",   area: "Armado",   genero: "mujer"  },
+  { nombre: "Alexander Moran",  area: "Armado",   genero: "hombre" },
+  { nombre: "Blanca Andrade",   area: "Armado",   genero: "mujer"  }
+];
+
+// ─── INICIALIZACIÓN AL CARGAR ───────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
-  // ─── 1) LEER TRABAJADOR SELECCIONADO ──────────────────────────────────────
+  // 1) Oculto inicialmente panels
+  loginPanel.style.display   = "none";
+  adminPanel.style.display   = "none";
+  adminBtn.disabled          = true;
+
+  // 2) Genero menú lateral de trabajadores
+  workers.forEach(w => {
+    const li = document.createElement("li");
+    li.textContent = w.nombre;
+    li.addEventListener("click", () => selectWorker(w));
+    workerListEl.appendChild(li);
+  });
+
+  // 3) Si ya hay uno en localStorage, lo reaplico
+  const stored = localStorage.getItem("selectedWorker");
+  if (stored) {
+    const w = workers.find(x => x.nombre === stored);
+    if (w) selectWorker(w);
+  }
+});
+
+// ─── FUNCIONES DE LOGIN / ADMIN ─────────────────────────────────────────────────
+function showLoginPanel() {
+  loginPanel.style.display = "block";
+}
+
+function validateAdmin() {
+  const userName = document.getElementById("adminUser").value.trim();
+  const pass     = document.getElementById("adminPass").value;
+  if (pass === "2025") {
+    loginPanel.style.display   = "none";
+    adminBtn.disabled          = false;
+    welcomeMessage.textContent  = `Bienvenido, ${userName}`;
+  } else {
+    alert("Contraseña incorrecta.");
+  }
+}
+
+function showAdminPanel() {
+  adminPanel.style.display = "block";
+  // Opcional: ocultar secciones internas hasta que el usuario elija
+  document.getElementById("referenceSection").style.display = "none";
+  document.getElementById("workerSection").style.display    = "none";
+}
+
+function showReferences() {
+  document.getElementById("referenceSection").style.display = "block";
+  document.getElementById("workerSection").style.display    = "none";
+}
+
+function showWorkers() {
+  document.getElementById("workerSection").style.display    = "block";
+  document.getElementById("referenceSection").style.display = "none";
+}
+
+// ─── SELECCIÓN DE TRABAJADOR ────────────────────────────────────────────────────
+function selectWorker(worker) {
+  // Actualizo UI
+  workerNameEl.textContent = worker.nombre;
+  workerAreaEl.textContent = "Área: " + worker.area;
+  workerImgEl.src = worker.genero === "hombre"
+    ? "https://www.w3schools.com/howto/img_avatar.png"
+    : "https://www.w3schools.com/howto/img_avatar2.png";
+  profileCard.style.display = "block";
+  optionsBar.style.display  = "block";
+
+  // Guardo la selección
+  localStorage.setItem("selectedWorker", worker.nombre);
+}
+
+// ─── NAVEGACIÓN: Registro de Producción ────────────────────────────────────────
+function registerProduction() {
   const stored = localStorage.getItem("selectedWorker");
   if (!stored) {
-    alert("No hay trabajador seleccionado. Regresa a la página principal.");
-    window.location.replace("index.html");
+    alert("Selecciona un trabajador primero.");
     return;
   }
-  // Pinto el nombre en encabezado y sidebar
-  document.getElementById("workerNameDisplay").textContent = stored;
-  document.getElementById("workerInSidebar").textContent  = stored;
+  // Redirijo sin historial para bloquear "volver atrás"
+  window.location.replace("registroP.html");
+}
 
-  // ─── 2) INICIALIZAR FECHA HOY ──────────────────────────────────────────────
-  const dateInput = document.getElementById("dateInput");
-  dateInput.value = new Date().toISOString().slice(0,10);
-
-  // ─── 3) GENERAR 12 FILAS DE ENTRADA ────────────────────────────────────────
-  const tbody        = document.querySelector("#productionTable tbody");
-  const grandTotalEl = document.getElementById("grandTotal");
-
-  for (let i = 1; i <= 12; i++) {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${i}</td>
-      <td><input type="number" min="0" value="0"></td>
-      <td><input type="number" min="0" value="0"></td>
-      <td>0.00</td>
-    `;
-    // Cada vez que cambie un input recalculo
-    tr.querySelectorAll("input").forEach(inp =>
-      inp.addEventListener("input", updateRow)
-    );
-    tbody.appendChild(tr);
-  }
-
-  // ─── 4) CÁLCULOS ──────────────────────────────────────────────────────────
-  function updateRow() {
-    const row = this.closest("tr");
-    const qty = parseFloat(row.cells[1].firstChild.value) || 0;
-    const val = parseFloat(row.cells[2].firstChild.value) || 0;
-    row.cells[3].textContent = (qty * val).toFixed(2);
-    updateGrandTotal();
-  }
-
-  function updateGrandTotal() {
-    let sum = 0;
-    tbody.querySelectorAll("tr").forEach(r => {
-      sum += parseFloat(r.cells[3].textContent) || 0;
-    });
-    grandTotalEl.textContent = sum.toFixed(2);
-  }
-
-  // ─── 5) GUARDAR REGISTRO ──────────────────────────────────────────────────
-  document.getElementById("saveBtn").addEventListener("click", () => {
-    if (!dateInput.value) {
-      alert("Selecciona una fecha.");
-      return;
-    }
-    // Armo sólo filas con datos
-    const registros = [];
-    tbody.querySelectorAll("tr").forEach((r, idx) => {
-      const qty = parseFloat(r.cells[1].firstChild.value) || 0;
-      const val = parseFloat(r.cells[2].firstChild.value) || 0;
-      const tot = parseFloat(r.cells[3].textContent) || 0;
-      if (qty > 0 && val > 0) {
-        registros.push({
-          fila: idx+1,
-          cantidad: qty,
-          valor_unitario: val,
-          total: tot.toFixed(2)
-        });
-      }
-    });
-
-    if (registros.length === 0) {
-      alert("Debes ingresar al menos una Cantidad y Valor.");
-      return;
-    }
-
-    const payload = {
-      trabajador:   stored,
-      fecha:        dateInput.value,
-      registros:    registros,
-      totalGeneral: grandTotalEl.textContent
-    };
-
-    // URL de tu Web App de Google Apps Script
-    fetch("https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    })
-    .then(() => {
-      alert("Registro guardado correctamente.");
-      // reset form
-      dateInput.value = new Date().toISOString().slice(0,10);
-      tbody.querySelectorAll("tr").forEach(r => {
-        r.cells[1].firstChild.value = 0;
-        r.cells[2].firstChild.value = 0;
-        r.cells[3].textContent     = "0.00";
-      });
-      updateGrandTotal();
-    })
-    .catch(err => alert("Error al guardar: " + err));
-  });
-});
+// ─── OTRAS FUNCIONES (sólo alert por ahora) ───────────────────────────────────
+function viewData()       { alert(`Consulta quincenal de ${workerNameEl.textContent}`); }
+function checkEfficiency(){ alert(`Eficiencia de ${workerNameEl.textContent}`); }
+function generateReport() { alert(`Informe quincenal de ${workerNameEl.textContent}`); }
