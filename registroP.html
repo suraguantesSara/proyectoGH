@@ -8,19 +8,19 @@
 </head>
 <body>
 
-  <!-- Top Bar fijo -->
+  <!-- Top bar fijo -->
   <header class="top-bar">
-    <h1>Registro de Producción Diaria</h1>
+    <h1>Registro de Producción</h1>
   </header>
 
   <div class="wrapper">
-    <!-- Menú lateral sin enlaces a otras páginas -->
+    <!-- Menú lateral (sin enlaces a otras páginas) -->
     <aside class="sidebar">
       <div class="profile-container">
         <img src="https://www.w3schools.com/howto/img_avatar.png" alt="Avatar">
         <p id="workerInSidebar">—</p>
       </div>
-      <h2>Trabajadores</h2>
+      <h2>Sistema de Totales diario</h2>
       <ul id="workerList"></ul>
     </aside>
 
@@ -30,7 +30,7 @@
         <h2>Trabajador: <span id="workerNameDisplay">—</span></h2>
         <div class="date-picker">
           <label for="dateInput">Fecha:</label>
-          <input type="date" id="dateInput">
+          <input type="date" id="dateInput" />
         </div>
       </div>
 
@@ -38,10 +38,15 @@
         <table id="productionTable">
           <thead>
             <tr>
-              <th>#</th><th>Cantidad</th><th>Valor unitario</th><th>Total</th>
+              <th>#</th>
+              <th>Cantidad</th>
+              <th>Valor unitario</th>
+              <th>Total</th>
             </tr>
           </thead>
-          <tbody></tbody>
+          <tbody>
+            <!-- aquí se generarán 12 filas -->
+          </tbody>
         </table>
       </div>
 
@@ -53,7 +58,6 @@
       <button id="saveBtn" class="btn-save">Guardar Registro</button>
     </main>
   </div>
-
 
   <script src="registroP.js"></script>
 </body>
