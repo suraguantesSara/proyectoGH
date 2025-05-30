@@ -1,135 +1,127 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Recuperar el nombre del trabajador desde la URL
-  const params = new URLSearchParams(window.location.search);
-  let worker = params.get("worker");
-  if (!worker) {
-    worker = "No identificado";
-  }
-  document.getElementById("workerNameDisplay").textContent = worker;
-
-  const tbody = document.querySelector("#productionTable tbody");
-
-  // Crear 15 filas en la tabla
-  for (let i = 1; i <= 15; i++) {
-    let tr = document.createElement("tr");
-
-    // Celda con número de fila
-    let cellNum = document.createElement("td");
-    cellNum.textContent = i;
-
-    // Celda para ingresar Cantidad
-    let cellCantidad = document.createElement("td");
-    let inputCantidad = document.createElement("input");
-    inputCantidad.type = "number";
-    inputCantidad.min = "0";
-    inputCantidad.value = "0";
-    inputCantidad.addEventListener("input", updateRowTotal);
-    cellCantidad.appendChild(inputCantidad);
-
-    // Celda para ingresar Valor Unitario
-    let cellValor = document.createElement("td");
-    let inputValor = document.createElement("input");
-    inputValor.type = "number";
-    inputValor.min = "0";
-    inputValor.value = "0";
-    inputValor.addEventListener("input", updateRowTotal);
-    cellValor.appendChild(inputValor);
-
-    // Celda que muestra el Total de la fila (Cantidad * Valor)
-    let cellTotal = document.createElement("td");
-    cellTotal.textContent = "0.00";
-
-    tr.appendChild(cellNum);
-    tr.appendChild(cellCantidad);
-    tr.appendChild(cellValor);
-    tr.appendChild(cellTotal);
-    tbody.appendChild(tr);
-  }
-
-  // Función que actualiza el total de la fila donde se modifique un input
-  function updateRowTotal() {
-    const row = this.closest("tr");
-    const quantity = parseFloat(row.cells[1].querySelector("input").value) || 0;
-    const unitPrice = parseFloat(row.cells[2].querySelector("input").value) || 0;
-    const total = quantity * unitPrice;
-    row.cells[3].textContent = total.toFixed(2);
-    updateGrandTotal();
-  }
-
-  // Sumar todos los totales de las filas y mostrarlos en "grandTotal"
-  function updateGrandTotal() {
-    let grandTotal = 0;
-    const rows = document.querySelectorAll("#productionTable tbody tr");
-    rows.forEach(row => {
-      grandTotal += parseFloat(row.cells[3].textContent) || 0;
-    });
-    document.getElementById("grandTotal").textContent = grandTotal.toFixed(2);
-  }
-
-  // Manejo del envío del formulario
-  const productionForm = document.getElementById("productionForm");
-  productionForm.addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    const dateVal = document.getElementById("date").value;
-    if (!dateVal) {
-      alert("Por favor ingresa la fecha.");
-      return;
-    }
-
-    // Crear un arreglo con los datos de cada fila
-    const data = [];
-    const rows = document.querySelectorAll("#productionTable tbody tr");
-    rows.forEach((row, index) => {
-      const quantity = row.cells[1].querySelector("input").value;
-      const unitPrice = row.cells[2].querySelector("input").value;
-      const total = row.cells[3].textContent;
-      data.push({ fila: index + 1, cantidad: quantity, valor_unitario: unitPrice, total: total });
-    });
-    const grandTotal = document.getElementById("grandTotal").textContent;
-
-    const payload = {
-      trabajador: worker,
-      fecha: dateVal,
-      registros: data,
-      totalGeneral: grandTotal,
-    };
-
-    // Reemplaza la siguiente URL por la de tu Web App de Google Apps Script
-    const url = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
-
-    fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    })
-      .then(() => {
-        alert("Registro guardado exitosamente.");
-        productionForm.reset();
-        // Opcional: Reiniciar totales (si fuera necesario)
-        updateGrandTotal();
-      })
-      .catch((error) => {
-        alert("Error al guardar el registro: " + error.message);
-      });
-  });
-});
-document.addEventListener("DOMContentLoaded", () => {
-  // 1) Mostrar nombre del trabajador desde la URL
   const params = new URLSearchParams(window.location.search);
   const worker = params.get("worker") || "Sin identificar";
   document.getElementById("workerNameDisplay").textContent = worker;
 
-  // 2) Inicializar selector de fecha al día de hoy
+  // Inicializa fecha a hoy
   const dateInput = document.getElementById("date");
-  dateInput.value = new Date().toISOString().slice(0, 10);
+  dateInput.value = new Date().toISOString().slice(0,10);
 
-  // 3) Crear 15 filas opcionales en la tabla
+  // Referencias al DOM
   const tbody = document.querySelector("#productionTable tbody");
+  const grandTotalEl = document.getElementById("grandTotal");
+  const form = document.getElementById("productionForm");
+
+  // Generar 15 filas
   for (let i = 1; i <= 15; i++) {
     const tr = document.createElement("tr");
 
-    // Celda # 
+    // Número de fila
     const tdNum = document.createElement("td");
     tdNum.textContent = i;
-    tr
+    tr.appendChild(tdNum);
+
+    // Input Cantidad
+    const tdQty = document.createElement("td");
+    const inpQty = document.createElement("input");
+    inpQty.type = "number"; inpQty.min = "0"; inpQty.value = "0";
+    inpQty.addEventListener("input", updateRow);
+    tdQty.appendChild(inpQty);
+    tr.appendChild(tdQty);
+
+    // Input Valor unitario
+    const tdVal = document.createElement("td");
+    const inpVal = document.createElement("input");
+    inpVal.type = "number"; inpVal.min = "0"; inpVal.value = "0";
+    inpVal.addEventListener("input", updateRow);
+    tdVal.appendChild(inpVal);
+    tr.appendChild(tdVal);
+
+    // Total fila
+    const tdTot = document.createElement("td");
+    tdTot.textContent = "0.00";
+    tr.appendChild(tdTot);
+
+    tbody.appendChild(tr);
+  }
+
+  // Actualiza total de la fila y Total General
+  function updateRow() {
+    const row = this.closest("tr");
+    const qty = parseFloat(row.cells[1].firstChild.value) || 0;
+    const val = parseFloat(row.cells[2].firstChild.value) || 0;
+    const tot = qty * val;
+    row.cells[3].textContent = tot.toFixed(2);
+    updateGrandTotal();
+  }
+
+  function updateGrandTotal() {
+    let sum = 0;
+    tbody.querySelectorAll("tr").forEach(r => {
+      sum += parseFloat(r.cells[3].textContent) || 0;
+    });
+    grandTotalEl.textContent = sum.toFixed(2);
+  }
+
+  // Envío de formulario
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+
+    const date = dateInput.value;
+    if (!date) {
+      alert("Debes seleccionar una fecha.");
+      return;
+    }
+
+    // Recopilar solo filas con datos > 0
+    const registros = [];
+    tbody.querySelectorAll("tr").forEach((r, idx) => {
+      const qty = parseFloat(r.cells[1].firstChild.value) || 0;
+      const val = parseFloat(r.cells[2].firstChild.value) || 0;
+      const tot = parseFloat(r.cells[3].textContent) || 0;
+      if (qty > 0 && val > 0) {
+        registros.push({
+          fila: idx+1,
+          cantidad: qty,
+          valor_unitario: val,
+          total: tot.toFixed(2)
+        });
+      }
+    });
+
+    // Si no hay ningún registro, prevenimos envío
+    if (registros.length === 0) {
+      alert("Ingresa al menos un registro con Cantidad y Valor.");
+      return;
+    }
+
+    const payload = {
+      trabajador: worker,
+      fecha: date,
+      registros,
+      totalGeneral: grandTotalEl.textContent
+    };
+
+    // Envía a tu Web App de Google Apps Script
+    const url = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
+    fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+    .then(() => {
+      alert("Registro guardado exitosamente.");
+      form.reset();
+      // Reiniciar totales
+      tbody.querySelectorAll("tr input").forEach(i => i.value = 0);
+      tbody.querySelectorAll("tr td:last-child")
+           .forEach(td => td.textContent = "0.00");
+      updateGrandTotal();
+      // volver a fecha de hoy
+      dateInput.value = new Date().toISOString().slice(0,10);
+    })
+    .catch(err => {
+      alert("Error al guardar: " + err);
+    });
+  });
+});
