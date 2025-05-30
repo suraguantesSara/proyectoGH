@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Producción</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Encabezado con perfil y botones -->
+    <header class="top-bar">
+        <div class="profile-container">
+            <img id="profileImg" src="https://www.w3schools.com/howto/img_avatar.png" alt="Perfil">
+            <span id="welcomeMessage">Bienvenido</span>
+        </div>
+        <div class="button-container">
+            <button class="login-btn" onclick="showLoginPanel()">Ingresar</button>
+            <button class="admin-btn" id="adminBtn" onclick="showAdminPanel()" disabled>Administrador</button>
+        </div>
+    </header>
+
+    <!-- Login flotante en la parte derecha -->
+    <div id="loginPanel" class="login-panel" style="display: none;">
+        <h2>Acceso Administrador</h2>
+        <input type="text" id="adminUser" placeholder="Escribe tu nombre">
+        <input type="password" id="adminPass" placeholder="Contraseña">
+        <button onclick="validateAdmin()">Ingresar</button>
+    </div>
+
+    <div class="sidebar">
+        <h2>Trabajadores</h2>
+        <ul id="workerList"></ul>
+    </div>
+
+    <div class="content">
+        <div class="profile">
+            <img id="workerImg" src="" alt="Foto de perfil">
+            <h2 id="workerName">Seleccione un trabajador</h2>
+            <p id="workerArea"></p>
+        </div>
+
+        <div class="options">
+            <button onclick="registerProduction()">Registro de producción diaria</button>
+            <button onclick="viewData()">Consultar datos quincenales</button>
+            <button onclick="checkEfficiency()">Revisar eficiencia</button>
+            <button onclick="generateReport()">Generar informe quincenal</button>
+        </div>
+
+        <!-- Panel de administración con opciones -->
+        <div id="adminPanel" class="admin-panel" style="display: none;">
+            <h2>Administración</h2>
+            <div class="admin-options">
+                <button onclick="showReferences()">Ver / Editar Referencias</button>
+                <button onclick="showWorkers()">Ver / Editar Trabajadores</button>
+            </div>
+            <div id="referenceSection" style="display: none;">
+                <h3>Referencias</h3>
+                <table id="referenceTable">
+                    <tr>
+                        <th>Referencia</th>
+                        <th>Precio por docena</th>
+                        <th>Acciones</th>
+                    </tr>
+                </table>
+            </div>
+            <div id="workerSection" style="display: none;">
+                <h3>Trabajadores</h3>
+                <ul id="workerAdminList"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
