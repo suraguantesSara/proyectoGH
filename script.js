@@ -1,135 +1,106 @@
-// ─── LOGIN & ADMIN ────────────────────────────────────────────────────────────
-// Referencias a elementos DOM
-const loginPanel      = document.getElementById("loginPanel");
-const adminPanel      = document.getElementById("adminPanel");
-const adminBtn        = document.getElementById("adminBtn");
-const welcomeMessage  = document.getElementById("welcomeMessage");
-const referenceSection= document.getElementById("referenceSection");
-const workerSection   = document.getElementById("workerSection");
-
-// Muestra el panel de login
-function showLoginPanel() {
-  loginPanel.style.display = "block";
-}
-
-// Valida credenciales de administrador
-function validateAdmin() {
-  const userName = document.getElementById("adminUser").value.trim();
-  const pass     = document.getElementById("adminPass").value;
-
-  if (pass === "2025") {
-    loginPanel.style.display = "none";
-    adminBtn.disabled = false;                            // Habilita botón Admin
-    welcomeMessage.textContent = `Bienvenido, ${userName}`;// Muestra nombre
-  } else {
-    alert("Contraseña incorrecta.");
-  }
-}
-
-// Muestra el panel de administración
-function showAdminPanel() {
-  adminPanel.style.display = "block";
-  // Al entrar, oculta ambas secciones y deja que el usuario elija
-  referenceSection.style.display = "none";
-  workerSection.style.display    = "none";
-}
-
-// Muestra sección de Referencias
-function showReferences() {
-  referenceSection.style.display = "block";
-  workerSection.style.display    = "none";
-}
-
-// Muestra sección de Trabajadores (edición)
-function showWorkers() {
-  workerSection.style.display    = "block";
-  referenceSection.style.display = "none";
-}
-
-// ─── GESTIÓN DE TRABAJADORES ──────────────────────────────────────────────────
-// Datos de trabajadores
-const workers = [
-  { nombre: "Luis Oliveros",     area: "Volteado", genero: "hombre" },
-  { nombre: "Fernando Arias",    area: "Volteado", genero: "hombre" },
-  { nombre: "Jesus Arteaga",     area: "Volteado", genero: "hombre" },
-  { nombre: "David Parra",       area: "Volteado", genero: "hombre" },
-  { nombre: "Alex (nuevo)",      area: "Volteado", genero: "hombre" },
-  { nombre: "Nataly Rodriguez",  area: "Cerrado",  genero: "mujer"  },
-  { nombre: "Gustavo Alvarado",  area: "Cerrado",  genero: "hombre" },
-  { nombre: "Carlos Caicedo",    area: "Cerrado",  genero: "hombre" },
-  { nombre: "Kevin Lozano",      area: "Cerrado",  genero: "hombre" },
-  { nombre: "Angela Pacheco",    area: "Cerrado",  genero: "mujer"  },
-  { nombre: "Liliana Diaz",      area: "Armado",   genero: "mujer"  },
-  { nombre: "Claudia Gonzales",  area: "Armado",   genero: "mujer"  },
-  { nombre: "Johanna Zuñiga",    area: "Armado",   genero: "mujer"  },
-  { nombre: "Solveida Gesama",   area: "Armado",   genero: "mujer"  },
-  { nombre: "Nancy Arias",       area: "Armado",   genero: "mujer"  },
-  { nombre: "Karolie Luna",      area: "Armado",   genero: "mujer"  },
-  { nombre: "Amanda Cardona",    area: "Armado",   genero: "mujer"  },
-  { nombre: "Alexander Moran",   area: "Armado",   genero: "hombre" },
-  { nombre: "Blanca Andrade",    area: "Armado",   genero: "mujer"  }
-];
-
-// Referencias DOM para la lista y perfil
-const workerList = document.getElementById("workerList");
-const workerName = document.getElementById("workerName");
-const workerArea = document.getElementById("workerArea");
-const workerImg  = document.getElementById("workerImg");
-const profile    = document.querySelector(".profile");
-const options    = document.querySelector(".options");
-
-// Genera la lista lateral de trabajadores
-workers.forEach(w => {
-  const li = document.createElement("li");
-  li.textContent = w.nombre;
-  li.onclick = () => selectWorker(w);
-  workerList.appendChild(li);
-});
-
-// Selecciona un trabajador, actualiza UI y guarda en localStorage
-function selectWorker(worker) {
-  // Actualiza la UI
-  workerName.textContent = worker.nombre;
-  workerArea.textContent = `Área: ${worker.area}`;
-  workerImg.src = worker.genero === "hombre"
-    ? "https://www.w3schools.com/howto/img_avatar.png"
-    : "https://www.w3schools.com/howto/img_avatar2.png";
-  profile.style.display = "block";
-  options.style.display = "block";
-
-  // Guarda selección para la página de registro
-  localStorage.setItem("selectedWorker", worker.nombre);
-}
-
-// Intento de restaurar selección al cargar la página
-window.addEventListener("DOMContentLoaded", () => {
-  const stored = localStorage.getItem("selectedWorker");
-  if (stored) {
-    // Busca en la lista el objeto correspondiente
-    const w = workers.find(x => x.nombre === stored);
-    if (w) selectWorker(w);
-  }
-});
-
-// ─── NAVEGACIÓN & ACCIONES ────────────────────────────────────────────────────
-// Registro de producción diaria: guarda y redirige sin historial
-function registerProduction() {
+document.addEventListener("DOMContentLoaded", () => {
+  // ─── 1) LEER TRABAJADOR SELECCIONADO ──────────────────────────────────────
   const stored = localStorage.getItem("selectedWorker");
   if (!stored) {
-    alert("Por favor, selecciona un trabajador primero.");
+    alert("No hay trabajador seleccionado. Regresa a la página principal.");
+    window.location.replace("index.html");
     return;
   }
-  // Redirige reemplazando la entrada actual (no permite volver atrás)
-  window.location.replace("registroP.html");
-}
+  // Pinto el nombre en encabezado y sidebar
+  document.getElementById("workerNameDisplay").textContent = stored;
+  document.getElementById("workerInSidebar").textContent  = stored;
 
-// Otras acciones (puedes personalizarlas)
-function viewData() {
-  alert(`Consulta de datos quincenales de ${workerName.textContent}`);
-}
-function checkEfficiency() {
-  alert(`Revisión de eficiencia de ${workerName.textContent}`);
-}
-function generateReport() {
-  alert(`Generación de informe quincenal de ${workerName.textContent}`);
-}
+  // ─── 2) INICIALIZAR FECHA HOY ──────────────────────────────────────────────
+  const dateInput = document.getElementById("dateInput");
+  dateInput.value = new Date().toISOString().slice(0,10);
+
+  // ─── 3) GENERAR 12 FILAS DE ENTRADA ────────────────────────────────────────
+  const tbody        = document.querySelector("#productionTable tbody");
+  const grandTotalEl = document.getElementById("grandTotal");
+
+  for (let i = 1; i <= 12; i++) {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${i}</td>
+      <td><input type="number" min="0" value="0"></td>
+      <td><input type="number" min="0" value="0"></td>
+      <td>0.00</td>
+    `;
+    // Cada vez que cambie un input recalculo
+    tr.querySelectorAll("input").forEach(inp =>
+      inp.addEventListener("input", updateRow)
+    );
+    tbody.appendChild(tr);
+  }
+
+  // ─── 4) CÁLCULOS ──────────────────────────────────────────────────────────
+  function updateRow() {
+    const row = this.closest("tr");
+    const qty = parseFloat(row.cells[1].firstChild.value) || 0;
+    const val = parseFloat(row.cells[2].firstChild.value) || 0;
+    row.cells[3].textContent = (qty * val).toFixed(2);
+    updateGrandTotal();
+  }
+
+  function updateGrandTotal() {
+    let sum = 0;
+    tbody.querySelectorAll("tr").forEach(r => {
+      sum += parseFloat(r.cells[3].textContent) || 0;
+    });
+    grandTotalEl.textContent = sum.toFixed(2);
+  }
+
+  // ─── 5) GUARDAR REGISTRO ──────────────────────────────────────────────────
+  document.getElementById("saveBtn").addEventListener("click", () => {
+    if (!dateInput.value) {
+      alert("Selecciona una fecha.");
+      return;
+    }
+    // Armo sólo filas con datos
+    const registros = [];
+    tbody.querySelectorAll("tr").forEach((r, idx) => {
+      const qty = parseFloat(r.cells[1].firstChild.value) || 0;
+      const val = parseFloat(r.cells[2].firstChild.value) || 0;
+      const tot = parseFloat(r.cells[3].textContent) || 0;
+      if (qty > 0 && val > 0) {
+        registros.push({
+          fila: idx+1,
+          cantidad: qty,
+          valor_unitario: val,
+          total: tot.toFixed(2)
+        });
+      }
+    });
+
+    if (registros.length === 0) {
+      alert("Debes ingresar al menos una Cantidad y Valor.");
+      return;
+    }
+
+    const payload = {
+      trabajador:   stored,
+      fecha:        dateInput.value,
+      registros:    registros,
+      totalGeneral: grandTotalEl.textContent
+    };
+
+    // URL de tu Web App de Google Apps Script
+    fetch("https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+    .then(() => {
+      alert("Registro guardado correctamente.");
+      // reset form
+      dateInput.value = new Date().toISOString().slice(0,10);
+      tbody.querySelectorAll("tr").forEach(r => {
+        r.cells[1].firstChild.value = 0;
+        r.cells[2].firstChild.value = 0;
+        r.cells[3].textContent     = "0.00";
+      });
+      updateGrandTotal();
+    })
+    .catch(err => alert("Error al guardar: " + err));
+  });
+});
