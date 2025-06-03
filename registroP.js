@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // URL de tu Web App de Google Apps Script
-const url = "https://script.google.com/macros/s/AKfycbw1CzoIUPxReNzfLoHEzFbhS3pU0_qL7MVx6hkzJ5fsg-SI_vRoRt8i0fkRnP63_bgh8g/exec";
+const url = "https://script.google.com/macros/s/TU_URL_CORRECTA/exec"; // Asegúrate de que sea la URL correcta
 
 fetch(url, {
   method: "POST",
@@ -112,4 +112,5 @@ function resetForm() {
     r.cells[3].textContent = "0.00";
   });
   document.getElementById("grandTotal").textContent = "0.00";
+}
 }
