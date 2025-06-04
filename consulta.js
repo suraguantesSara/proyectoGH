@@ -1,15 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // ─── LEER TRABAJADOR SELECCIONADO ────────────────────────────────────────
-  const stored = localStorage.getItem("selectedWorker");
-  if (!stored) {
+  const storedWorker = localStorage.getItem("selectedWorker");
+  if (!storedWorker) {
     alert("No hay trabajador seleccionado. Regresa a la página principal.");
     window.location.replace("index.html");
     return;
   }
-  document.getElementById("workerName").textContent = stored;
+  document.getElementById("workerName").textContent = storedWorker;
 
-  // ─── RECUPERAR REGISTROS DESDE GOOGLE SHEETS ─────────────────────────────
-  const url = "https://script.google.com/macros/s/TU_URL_CORRECTA/exec?worker=" + encodeURIComponent(stored);
+  const url = "https://script.google.com/macros/s/TU_URL_CORRECTA/exec?worker=" + encodeURIComponent(storedWorker);
 
   fetch(url)
     .then(response => response.json())
@@ -20,24 +18,33 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const tableBody = document.querySelector("#historyTable tbody");
-      tableBody.innerHTML = ""; // Limpio la tabla antes de insertar nuevos datos
+      tableBody.innerHTML = ""; 
+
+      let saldoPendiente = data.saldoPendiente || 0;
 
       data.records.forEach(record => {
-        const row = document.createElement("tr");
+        const descuento = Math.min(record.ganancia, saldoPendiente);
+        saldoPendiente -= descuento;
 
+        const row = document.createElement("tr");
         row.innerHTML = `
           <td>${record.fecha}</td>
           <td>${record.cantidadTotal}</td>
           <td>${record.ganancia}</td>
           <td>${record.totalAcumulado}</td>
+          <td>${descuento.toFixed(2)}</td>
           <td>${record.fechaRegistro}</td>
         `;
 
         tableBody.appendChild(row);
       });
     })
-    .catch(err => {
-      console.error("Error al obtener datos:", err);
-      alert("Error al conectar con Google Sheets.");
-    });
+    .catch(err => alert("Error al obtener datos: " + err));
+
+  document.getElementById("updatePromedioBtn").addEventListener("click", () => {
+    const promedio = parseFloat(document.getElementById("promedioInput").value) || 0;
+    fetch(url + `&promedio=${promedio}`, { method: "POST" })
+      .then(() => alert("Promedio actualizado correctamente."))
+      .catch(err => alert("Error al actualizar el promedio: " + err));
+  });
 });
