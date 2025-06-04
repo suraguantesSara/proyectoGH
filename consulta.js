@@ -1,11 +1,32 @@
+ -1,76 +1,45 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const storedWorker = localStorage.getItem("selectedWorker");
+  const storedWorker = localStorage.getItem("selectedWorker");Add commentMore actions
   if (!storedWorker) {
     alert("No hay trabajador seleccionado. Regresa a la página principal.");
     window.location.replace("index.html");
     return;
   }
   document.getElementById("workerName").textContent = storedWorker;
+
+  let deudaInicial = 0;
+
+  function cargarTabla() {
+    deudaInicial = parseFloat(document.getElementById("promedioInput").value) || 0;
+    let saldoPendiente = deudaInicial;
+    let acumulado = -deudaInicial;
+
+    const url = "https://script.google.com/macros/s/AKfycbwRj9PuCnWGpxhWiXyhdcpP8WlYLIsMsbcE84yAuiWSFZyK8nsDus4SyJjur2le9Vv8/exec?worker=" + encodeURIComponent(storedWorker);
+
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === "ERROR") {
+          alert("Error al cargar registros: " + data.message);
+          return;
+function cargarTabla() {
+  deudaInicial = parseFloat(document.getElementById("promedioInput").value) || 0;
+  let saldoPendiente = deudaInicial;
+  let acumulado = -deudaInicial;
 
   const url = "https://script.google.com/macros/s/AKfycbwRj9PuCnWGpxhWiXyhdcpP8WlYLIsMsbcE84yAuiWSFZyK8nsDus4SyJjur2le9Vv8/exec?worker=" + encodeURIComponent(storedWorker);
 
@@ -18,13 +39,9 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const tableBody = document.querySelector("#historyTable tbody");
-      tableBody.innerHTML = ""; 
+      tableBody.innerHTML = "";
 
-      let deudaInicial = parseFloat(document.getElementById("promedioInput").value) || 0;
-      let saldoPendiente = deudaInicial;
-      let acumulado = -deudaInicial;
-
-      data.records.forEach((record) => {
+      data.records.forEach(record => {
         const gananciaOriginal = parseFloat(record.ganancia) || 0;
 
         let descuento = 0;
@@ -33,31 +50,70 @@ document.addEventListener("DOMContentLoaded", () => {
           saldoPendiente -= descuento;
         }
 
+        const tableBody = document.querySelector("#historyTable tbody");
+        tableBody.innerHTML = "";
+
+        data.records.forEach(record => {
+          const ganancia = parseFloat(record.ganancia) || 0;
+
+          let descuento = 0;
+          if (saldoPendiente > 0) {
+            descuento = Math.min(ganancia, saldoPendiente);
+            saldoPendiente -= descuento;
+          }
+
+          const gananciaReal = ganancia - descuento;
+          acumulado += gananciaReal;
+
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${formatearFecha(record.fecha)}</td>
+            <td>${formatearMoneda(record.cantidadTotal)}</td>
+            <td>${formatearMoneda(ganancia)}</td>
+            <td>${formatearMoneda(acumulado)}</td>
+            <td>${formatearMoneda(descuento)}</td>
+            <td>${formatearMoneda(saldoPendiente)}</td>
+            <td>${formatearFecha(record.fechaRegistro)}</td>
+          `;
+          tableBody.appendChild(row);
+        });
+      })
+      .catch(err => alert("Error al obtener datos: " + err));
+  }
+
+  document.getElementById("updatePromedioBtn").addEventListener("click", () => {
+    cargarTabla();
+    alert("Promedio actualizado correctamente.");
+  });
+
+  cargarTabla(); // Carga inicial
+
+});
+
+// Formatea moneda colombiana
+function formatearMoneda(valor) {
+  return `$ ${Number(valor).toLocaleString("es-CO", { maximumFractionDigits: 0 })}`;
+}
+
+// Formatea fecha a dd/mm/yyyy
+function formatearFecha(fechaISO) {
+  const fecha = new Date(fechaISO);
+  return fecha.toLocaleDateString("es-CO");
         const gananciaReal = gananciaOriginal - descuento;
         acumulado += gananciaReal;
 
         const row = document.createElement("tr");
         row.innerHTML = `
-          <td>${record.fecha}</td>
+          <td>${formatearFecha(record.fecha)}</td>
           <td>${formatearMoneda(record.cantidadTotal)}</td>
           <td>${formatearMoneda(gananciaOriginal)}</td>
           <td>${formatearMoneda(acumulado)}</td>
           <td>${formatearMoneda(descuento)}</td>
           <td>${formatearMoneda(saldoPendiente)}</td>
-          <td>${record.fechaRegistro}</td>
+          <td>${formatearFecha(record.fechaRegistro)}</td>
         `;
         tableBody.appendChild(row);
       });
     })
     .catch(err => alert("Error al obtener datos: " + err));
-});
-
-// Función para recalcular la tabla cuando se guarda el promedio
-document.getElementById("updatePromedioBtn").addEventListener("click", () => {
-  cargarTabla(); // Vuelve a cargar la tabla con el nuevo promedio ingresado
-});
-
-// Función para formatear números como moneda con símbolo "$" y separadores de miles
-function formatearMoneda(valor) {
-  return `$ ${Number(valor).toLocaleString("es-CO", { maximumFractionDigits: 0 })}`;
 }
