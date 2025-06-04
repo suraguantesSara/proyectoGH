@@ -86,4 +86,3 @@ function formatearFecha(fechaISO) {
   const fecha = new Date(fechaISO);
   return fecha.toLocaleDateString("es-CO");
 }
-
