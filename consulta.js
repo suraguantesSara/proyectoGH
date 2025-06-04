@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function cargarTabla() {
     let promedioIngresado = parseFloat(document.getElementById("promedioInput").value) || 0;
     let saldoRestante = promedioIngresado;
-    let totalAcumulado = -saldoRestante;
+    let totalAcumulado = -saldoRestante; // Inicia con la deuda negativa
 
     const url = "https://script.google.com/macros/s/AKfycbwRj9PuCnWGpxhWiXyhdcpP8WlYLIsMsbcE84yAuiWSFZyK8nsDus4SyJjur2le9Vv8/exec?worker=" + encodeURIComponent(storedWorker);
 
