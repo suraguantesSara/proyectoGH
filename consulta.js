@@ -52,6 +52,11 @@ document.addEventListener("DOMContentLoaded", () => {
     .catch(err => alert("Error al obtener datos: " + err));
 });
 
+// Función para recalcular la tabla cuando se guarda el promedio
+document.getElementById("updatePromedioBtn").addEventListener("click", () => {
+  cargarTabla(); // Vuelve a cargar la tabla con el nuevo promedio ingresado
+});
+
 // Función para formatear números como moneda con símbolo "$" y separadores de miles
 function formatearMoneda(valor) {
   return `$ ${Number(valor).toLocaleString("es-CO", { maximumFractionDigits: 0 })}`;
