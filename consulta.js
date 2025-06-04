@@ -53,4 +53,22 @@ document.addEventListener("DOMContentLoaded", () => {
     let saldoPendiente = nuevoPromedio;
 
     filas.forEach(row => {
-      const ganancia = parseFloat(row.cells[2].textContent.replace(/[^\d]/
+      const ganancia = parseFloat(row.cells[2].textContent.replace(/[^\d]/g, "")) || 0;
+      const totalAcumulado = parseFloat(row.cells[3].textContent.replace(/[^\d]/g, "")) || 0;
+      
+      const descuento = Math.min(ganancia, saldoPendiente);
+      saldoPendiente -= descuento;
+
+      // Actualizar la columna de "Promedio a pagar" y el nuevo total acumulado en la interfaz
+      row.cells[4].textContent = formatearMoneda(descuento);
+      row.cells[3].textContent = formatearMoneda(totalAcumulado - descuento);
+    });
+
+    alert("Promedio actualizado en la interfaz.");
+  });
+});
+
+// Función para formatear números como moneda con símbolo "$" y separadores de miles
+function formatearMoneda(valor) {
+  return `$ ${Number(valor).toLocaleString("es-CO", { maximumFractionDigits: 0 })}`;
+}
