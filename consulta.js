@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", () => {
   const storedWorker = localStorage.getItem("selectedWorker");
   if (!storedWorker) {
@@ -6,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.location.replace("index.html");
     return;
   }
+
   document.getElementById("workerName").textContent = storedWorker;
 
   const url = "https://script.google.com/macros/s/AKfycbwRj9PuCnWGpxhWiXyhdcpP8WlYLIsMsbcE84yAuiWSFZyK8nsDus4SyJjur2le9Vv8/exec?worker=" + encodeURIComponent(storedWorker);
@@ -19,61 +19,65 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const tableBody = document.querySelector("#historyTable tbody");
-      tableBody.innerHTML = ""; 
+      tableBody.innerHTML = "";
 
-      let saldoPendiente = parseFloat(document.getElementById("promedioInput").value) || 0;
-      let acumuladoPrevio = -saldoPendiente;
+      const promedioInicial = parseFloat(document.getElementById("promedioInput").value) || 0;
+      let saldoPendiente = promedioInicial;
+      let acumulado = -promedioInicial;
 
       data.records.forEach((record, index) => {
-        const gananciaNum = parseFloat(record.ganancia) || 0;
-
-        const descuento = Math.min(gananciaNum, saldoPendiente);
-        const gananciaReal = gananciaNum - descuento;
+        const ganancia = parseFloat(record.ganancia) || 0;
+        const descuento = Math.min(ganancia, saldoPendiente);
         saldoPendiente -= descuento;
-
-        acumuladoPrevio += gananciaReal;
+        const neto = ganancia - descuento;
+        acumulado += neto;
 
         const row = document.createElement("tr");
         row.innerHTML = `
-          <td>${record.fecha}</td>
+          <td>${formatearFecha(record.fecha)}</td>
           <td>${formatearMoneda(record.cantidadTotal)}</td>
-          <td>${formatearMoneda(gananciaNum)}</td>
-          <td>${formatearMoneda(acumuladoPrevio)}</td>
+          <td>${formatearMoneda(ganancia)}</td>
+          <td>${formatearMoneda(acumulado)}</td>
           <td>${formatearMoneda(descuento)}</td>
-          <td>${record.fechaRegistro}</td>
+          <td>${formatearFecha(record.fechaRegistro)}</td>
         `;
-
         tableBody.appendChild(row);
       });
     })
     .catch(err => alert("Error al obtener datos: " + err));
 
   document.getElementById("updatePromedioBtn").addEventListener("click", () => {
-    let saldoPendiente = parseFloat(document.getElementById("promedioInput").value) || 0;
+    let promedioInicial = parseFloat(document.getElementById("promedioInput").value) || 0;
+    let saldoPendiente = promedioInicial;
+    let acumulado = -promedioInicial;
 
     const filas = document.querySelectorAll("#historyTable tbody tr");
-    let acumuladoPrevio = -saldoPendiente;
 
     filas.forEach(row => {
-      const gananciaNum = parseFloat(row.cells[2].textContent.replace(/[^0-9-]/g, "")) || 0;
-
-      const descuento = Math.min(gananciaNum, saldoPendiente);
-      const gananciaReal = gananciaNum - descuento;
+      const ganancia = parseFloat(row.cells[2].textContent.replace(/[^0-9.-]+/g, "")) || 0;
+      const descuento = Math.min(ganancia, saldoPendiente);
       saldoPendiente -= descuento;
-
-      acumuladoPrevio += gananciaReal;
+      const neto = ganancia - descuento;
+      acumulado += neto;
 
       row.cells[4].textContent = formatearMoneda(descuento);
-      row.cells[3].textContent = formatearMoneda(acumuladoPrevio);
+      row.cells[3].textContent = formatearMoneda(acumulado);
     });
 
     alert("Promedio actualizado en la interfaz.");
   });
 });
 
-// Función para formatear números como moneda con símbolo "$" y separadores de miles
 function formatearMoneda(valor) {
   return `$ ${Number(valor).toLocaleString("es-CO", { maximumFractionDigits: 0 })}`;
 }
 
+function formatearFecha(fechaISO) {
+  const fecha = new Date(fechaISO);
+  return fecha.toLocaleDateString("es-CO", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric"
+  });
+}
 
