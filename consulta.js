@@ -22,15 +22,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
       let saldoPendiente = parseFloat(document.getElementById("promedioInput").value) || 0;
 
-      // Insertar registros en la tabla y ajustar el acumulado
-      data.records.forEach(record => {
+      data.records.forEach((record, index) => {
         const gananciaNum = parseFloat(record.ganancia) || 0;
-        const totalAcumuladoNum = parseFloat(record.totalAcumulado) || 0;
+        const totalAcumuladoNum = (index === 0) ? -saldoPendiente : parseFloat(tableBody.lastChild.cells[3].textContent.replace(/[^0-9-]/g, "")) || 0;
 
+        // Se descuenta el promedio de la ganancia hasta que el saldo llegue a cero
         const descuento = Math.min(gananciaNum, saldoPendiente);
         saldoPendiente -= descuento;
 
-        const nuevoTotalAcumulado = totalAcumuladoNum - descuento;
+        const nuevoTotalAcumulado = totalAcumuladoNum + gananciaNum - descuento;
 
         const row = document.createElement("tr");
         row.innerHTML = `
@@ -49,20 +49,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Función para actualizar el promedio en la interfaz sin afectar Sheets
   document.getElementById("updatePromedioBtn").addEventListener("click", () => {
-    let nuevoPromedio = parseFloat(document.getElementById("promedioInput").value) || 0;
-    
+    let saldoPendiente = parseFloat(document.getElementById("promedioInput").value) || 0;
+
     const filas = document.querySelectorAll("#historyTable tbody tr");
-    let saldoPendiente = nuevoPromedio;
+    let acumuladoPrevio = -saldoPendiente;
 
     filas.forEach(row => {
-      const gananciaNum = parseFloat(row.cells[2].textContent.replace(/[^0-9]/g, "")) || 0;
-      const totalAcumuladoNum = parseFloat(row.cells[3].textContent.replace(/[^0-9]/g, "")) || 0;
+      const gananciaNum = parseFloat(row.cells[2].textContent.replace(/[^0-9-]/g, "")) || 0;
 
       const descuento = Math.min(gananciaNum, saldoPendiente);
       saldoPendiente -= descuento;
 
+      acumuladoPrevio += gananciaNum - descuento;
+
       row.cells[4].textContent = formatearMoneda(descuento);
-      row.cells[3].textContent = formatearMoneda(totalAcumuladoNum - descuento);
+      row.cells[3].textContent = formatearMoneda(acumuladoPrevio);
     });
 
     alert("Promedio actualizado en la interfaz.");
