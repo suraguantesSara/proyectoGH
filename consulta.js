@@ -33,10 +33,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const row = document.createElement("tr");
         row.innerHTML = `
           <td>${record.fecha}</td>
-          <td>${record.cantidadTotal}</td>
-          <td>${record.ganancia}</td>
-          <td>${nuevoTotalAcumulado.toFixed(2)}</td>
-          <td>${descuento.toFixed(2)}</td>
+          <td>${formatearMoneda(record.cantidadTotal)}</td>
+          <td>${formatearMoneda(record.ganancia)}</td>
+          <td>${formatearMoneda(nuevoTotalAcumulado)}</td>
+          <td>${formatearMoneda(descuento)}</td>
           <td>${record.fechaRegistro}</td>
         `;
 
@@ -53,17 +53,4 @@ document.addEventListener("DOMContentLoaded", () => {
     let saldoPendiente = nuevoPromedio;
 
     filas.forEach(row => {
-      const ganancia = parseFloat(row.cells[2].textContent) || 0;
-      const totalAcumulado = parseFloat(row.cells[3].textContent) || 0;
-      
-      const descuento = Math.min(ganancia, saldoPendiente);
-      saldoPendiente -= descuento;
-
-      // Actualizar la columna de "Promedio a pagar" y el nuevo total acumulado en la interfaz
-      row.cells[4].textContent = descuento.toFixed(2);
-      row.cells[3].textContent = (totalAcumulado - descuento).toFixed(2);
-    });
-
-    alert("Promedio actualizado en la interfaz.");
-  });
-});
+      const ganancia = parseFloat(row.cells[2].textContent.replace(/[^\d]/
