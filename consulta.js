@@ -1,3 +1,4 @@
+<script>
 document.addEventListener("DOMContentLoaded", () => {
   const storedWorker = localStorage.getItem("selectedWorker");
   if (!storedWorker) {
@@ -21,17 +22,16 @@ document.addEventListener("DOMContentLoaded", () => {
       tableBody.innerHTML = ""; 
 
       let saldoPendiente = parseFloat(document.getElementById("promedioInput").value) || 0;
-      let acumuladoPrevio = -saldoPendiente; 
+      let acumuladoPrevio = -saldoPendiente;
 
       data.records.forEach((record, index) => {
         const gananciaNum = parseFloat(record.ganancia) || 0;
-        
-        // Aplicar descuento progresivo en cada fila
+
         const descuento = Math.min(gananciaNum, saldoPendiente);
+        const gananciaReal = gananciaNum - descuento;
         saldoPendiente -= descuento;
 
-        // Ajustar el acumulado tomando en cuenta la deuda pendiente
-        acumuladoPrevio += gananciaNum - descuento;
+        acumuladoPrevio += gananciaReal;
 
         const row = document.createElement("tr");
         row.innerHTML = `
@@ -58,9 +58,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const gananciaNum = parseFloat(row.cells[2].textContent.replace(/[^0-9-]/g, "")) || 0;
 
       const descuento = Math.min(gananciaNum, saldoPendiente);
+      const gananciaReal = gananciaNum - descuento;
       saldoPendiente -= descuento;
 
-      acumuladoPrevio += gananciaNum - descuento;
+      acumuladoPrevio += gananciaReal;
 
       row.cells[4].textContent = formatearMoneda(descuento);
       row.cells[3].textContent = formatearMoneda(acumuladoPrevio);
@@ -74,3 +75,5 @@ document.addEventListener("DOMContentLoaded", () => {
 function formatearMoneda(valor) {
   return `$ ${Number(valor).toLocaleString("es-CO", { maximumFractionDigits: 0 })}`;
 }
+</script>
+
