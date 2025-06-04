@@ -1,7 +1,11 @@
-function cargarTabla() {
-  deudaInicial = parseFloat(document.getElementById("promedioInput").value) || 0;
-  let saldoPendiente = deudaInicial;
-  let acumulado = -deudaInicial;
+document.addEventListener("DOMContentLoaded", () => {
+  const storedWorker = localStorage.getItem("selectedWorker");
+  if (!storedWorker) {
+    alert("No hay trabajador seleccionado. Regresa a la página principal.");
+    window.location.replace("index.html");
+    return;
+  }
+  document.getElementById("workerName").textContent = storedWorker;
 
   const url = "https://script.google.com/macros/s/AKfycbwRj9PuCnWGpxhWiXyhdcpP8WlYLIsMsbcE84yAuiWSFZyK8nsDus4SyJjur2le9Vv8/exec?worker=" + encodeURIComponent(storedWorker);
 
@@ -14,9 +18,13 @@ function cargarTabla() {
       }
 
       const tableBody = document.querySelector("#historyTable tbody");
-      tableBody.innerHTML = "";
+      tableBody.innerHTML = ""; 
 
-      data.records.forEach(record => {
+      let deudaInicial = parseFloat(document.getElementById("promedioInput").value) || 0;
+      let saldoPendiente = deudaInicial;
+      let acumulado = -deudaInicial;
+
+      data.records.forEach((record) => {
         const gananciaOriginal = parseFloat(record.ganancia) || 0;
 
         let descuento = 0;
@@ -30,16 +38,21 @@ function cargarTabla() {
 
         const row = document.createElement("tr");
         row.innerHTML = `
-          <td>${formatearFecha(record.fecha)}</td>
+          <td>${record.fecha}</td>
           <td>${formatearMoneda(record.cantidadTotal)}</td>
           <td>${formatearMoneda(gananciaOriginal)}</td>
           <td>${formatearMoneda(acumulado)}</td>
           <td>${formatearMoneda(descuento)}</td>
           <td>${formatearMoneda(saldoPendiente)}</td>
-          <td>${formatearFecha(record.fechaRegistro)}</td>
+          <td>${record.fechaRegistro}</td>
         `;
         tableBody.appendChild(row);
       });
     })
     .catch(err => alert("Error al obtener datos: " + err));
+});
+
+// Función para formatear números como moneda con símbolo "$" y separadores de miles
+function formatearMoneda(valor) {
+  return `$ ${Number(valor).toLocaleString("es-CO", { maximumFractionDigits: 0 })}`;
 }
