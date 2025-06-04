@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const row = document.createElement("tr");
           row.innerHTML = `
             <td>${formatearFecha(record.fecha)}</td>
-            <td>${formatearMoneda(record.cantidadTotal)}</td>
+            <td>${record.cantidadTotal}</td> <!-- Sin signo de dinero -->
             <td>${formatearMoneda(ganancia)}</td>
             <td>${formatearMoneda(totalAcumulado)}</td>
             <td>${formatearMoneda(descuento)}</td>
