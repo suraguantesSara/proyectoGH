@@ -1,4 +1,4 @@
-<script>
+
 document.addEventListener("DOMContentLoaded", () => {
   const storedWorker = localStorage.getItem("selectedWorker");
   if (!storedWorker) {
@@ -75,5 +75,5 @@ document.addEventListener("DOMContentLoaded", () => {
 function formatearMoneda(valor) {
   return `$ ${Number(valor).toLocaleString("es-CO", { maximumFractionDigits: 0 })}`;
 }
-</script>
+
 
