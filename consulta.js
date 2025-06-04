@@ -1,26 +1,15 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const storedWorker = localStorage.getItem("selectedWorker");
-  if (!storedWorker) {
-    alert("No hay trabajador seleccionado. Regresa a la página principal.");
-    window.location.replace("index.html");
-    return;
-  }
-  document.getElementById("workerName").textContent = storedWorker;
-
-  const url = "https://script.google.com/macros/s/AKfycbwRj9PuCnWGpxhWiXyhdcpP8WlYLIsMsbcE84yAuiWSFZyK8nsDus4SyJjur2le9Vv8/exec?worker=" + encodeURIComponent(storedWorker);
-
-  fetch(url)
-    .then(response => response.json())
-    .then(data => {
-      if (data.status === "ERROR") {
-        alert("Error al cargar registros: " + data.message);
+@@ -17,23 +17,25 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
+
+      document.getElementById("promedioInput").value = data.saldoPendiente || 0;
 
       const tableBody = document.querySelector("#historyTable tbody");
       tableBody.innerHTML = ""; 
       
       let saldoPendiente = parseFloat(document.getElementById("promedioInput").value) || 0;
+
+      let saldoPendiente = data.saldoPendiente || 0;
 
       // Insertar registros en la tabla y ajustar el acumulado
       data.records.forEach(record => {
@@ -33,42 +22,40 @@ document.addEventListener("DOMContentLoaded", () => {
         const row = document.createElement("tr");
         row.innerHTML = `
           <td>${record.fecha}</td>
-          <td>${formatearMoneda(record.cantidadTotal)}</td>
-          <td>${formatearMoneda(record.ganancia)}</td>
-          <td>${formatearMoneda(nuevoTotalAcumulado)}</td>
-          <td>${formatearMoneda(descuento)}</td>
+          <td>${record.cantidadTotal}</td>
+          <td>${record.ganancia}</td>
+          <td>${record.totalAcumulado}</td>
+          <td>${nuevoTotalAcumulado.toFixed(2)}</td>
+          <td>${descuento.toFixed(2)}</td>
           <td>${record.fechaRegistro}</td>
         `;
-
-        tableBody.appendChild(row);
-      });
+@@ -43,10 +45,25 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .catch(err => alert("Error al obtener datos: " + err));
 
   // Función para actualizar el promedio en la interfaz sin afectar Sheets
   document.getElementById("updatePromedioBtn").addEventListener("click", () => {
+    const promedio = parseFloat(document.getElementById("promedioInput").value) || 0;
+    fetch(url + `&promedio=${promedio}`, { method: "POST" })
+      .then(() => alert("Promedio actualizado correctamente."))
+      .catch(err => alert("Error al actualizar el promedio: " + err));
     let nuevoPromedio = parseFloat(document.getElementById("promedioInput").value) || 0;
     
     const filas = document.querySelectorAll("#historyTable tbody tr");
     let saldoPendiente = nuevoPromedio;
 
     filas.forEach(row => {
-      const ganancia = parseFloat(row.cells[2].textContent.replace(/[^\d]/g, "")) || 0;
-      const totalAcumulado = parseFloat(row.cells[3].textContent.replace(/[^\d]/g, "")) || 0;
+      const ganancia = parseFloat(row.cells[2].textContent) || 0;
+      const totalAcumulado = parseFloat(row.cells[3].textContent) || 0;
       
       const descuento = Math.min(ganancia, saldoPendiente);
       saldoPendiente -= descuento;
 
       // Actualizar la columna de "Promedio a pagar" y el nuevo total acumulado en la interfaz
-      row.cells[4].textContent = formatearMoneda(descuento);
-      row.cells[3].textContent = formatearMoneda(totalAcumulado - descuento);
+      row.cells[4].textContent = descuento.toFixed(2);
+      row.cells[3].textContent = (totalAcumulado - descuento).toFixed(2);
     });
 
     alert("Promedio actualizado en la interfaz.");
   });
 });
-
-// Función para formatear números como moneda con símbolo "$" y separadores de miles
-function formatearMoneda(valor) {
-  return `$ ${Number(valor).toLocaleString("es-CO", { maximumFractionDigits: 0 })}`;
-}
