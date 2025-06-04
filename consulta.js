@@ -8,9 +8,9 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("workerName").textContent = storedWorker;
 
   function cargarTabla() {
-    let deudaInicial = parseFloat(document.getElementById("promedioInput").value) || 0;
-    let saldoPendiente = deudaInicial;
-    let acumulado = -deudaInicial;
+    let promedioIngresado = parseFloat(document.getElementById("promedioInput").value) || 0;
+    let saldoRestante = promedioIngresado;
+    let totalAcumulado = -saldoRestante;
 
     const url = "https://script.google.com/macros/s/AKfycbwRj9PuCnWGpxhWiXyhdcpP8WlYLIsMsbcE84yAuiWSFZyK8nsDus4SyJjur2le9Vv8/exec?worker=" + encodeURIComponent(storedWorker);
 
@@ -25,22 +25,24 @@ document.addEventListener("DOMContentLoaded", () => {
         const tableBody = document.querySelector("#historyTable tbody");
         tableBody.innerHTML = ""; 
 
-        data.records.forEach(record => {
+        data.records.forEach((record, index) => {
           const ganancia = parseFloat(record.ganancia) || 0;
 
-          let descuento = Math.min(ganancia, saldoPendiente);
-          saldoPendiente -= descuento;
-
-          acumulado += ganancia - descuento;
+          if (saldoRestante > 0) {
+            let descuento = Math.min(ganancia, saldoRestante);
+            saldoRestante -= descuento;
+            totalAcumulado = ganancia - saldoRestante;
+          } else {
+            totalAcumulado += ganancia; // Cuando el saldo llega a 0, la ganancia se acumula normalmente
+          }
 
           const row = document.createElement("tr");
           row.innerHTML = `
             <td>${formatearFecha(record.fecha)}</td>
             <td>${formatearMoneda(record.cantidadTotal)}</td>
             <td>${formatearMoneda(ganancia)}</td>
-            <td>${formatearMoneda(acumulado)}</td>
-            <td>${formatearMoneda(descuento)}</td>
-            <td>${formatearMoneda(saldoPendiente)}</td>
+            <td>${formatearMoneda(totalAcumulado)}</td>
+            <td>${formatearMoneda(saldoRestante)}</td>
             <td>${formatearFecha(record.fechaRegistro)}</td>
           `;
           tableBody.appendChild(row);
@@ -55,7 +57,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   cargarTabla(); // Carga inicial
-
 });
 
 // Función para formatear números como moneda con símbolo "$" y separadores de miles
