@@ -54,6 +54,24 @@ body {
 
 h2 { margin-bottom: 15px; }
 
+/* Campo de promedio */
+.promedio-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+#promedioInput {
+  padding: 8px; width: 100px;
+}
+#updatePromedioBtn {
+  padding: 8px; background: #28a745; color: white;
+  border: none; border-radius: 5px; cursor: pointer;
+}
+#updatePromedioBtn:hover {
+  background: #218838;
+}
+
 /* Tabla */
 table {
   width: 100%; border-collapse: collapse;
