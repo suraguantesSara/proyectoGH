@@ -117,7 +117,19 @@ function registerProduction() {
   window.location.replace("registroP.html");
 }
 
+// ─── NAVEGACIÓN: Consulta Quincenal────────────────────────────────────────
+function viewData() {
+  // Verificar si el trabajador ha sido seleccionado
+  const storedWorker = localStorage.getItem("selectedWorker");
+  if (!storedWorker) {
+    alert("No hay trabajador seleccionado. Regresa a la página principal.");
+    return;
+  }
+
+  // Redirigir a consulta.html con el trabajador en la URL
+  window.location.href = `consulta.html?worker=${encodeURIComponent(storedWorker)}`;
+}
+
 // ─── OTRAS FUNCIONES (sólo alert por ahora) ───────────────────────────────────
-function viewData()       { alert(`Consulta quincenal de ${workerNameEl.textContent}`); }
 function checkEfficiency(){ alert(`Eficiencia de ${workerNameEl.textContent}`); }
 function generateReport() { alert(`Informe quincenal de ${workerNameEl.textContent}`); }
