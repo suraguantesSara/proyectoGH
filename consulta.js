@@ -28,11 +28,8 @@ document.addEventListener("DOMContentLoaded", () => {
         data.records.forEach(record => {
           const ganancia = parseFloat(record.ganancia) || 0;
 
-          let descuento = 0;
-          if (saldoPendiente > 0) {
-            descuento = Math.min(ganancia, saldoPendiente);
-            saldoPendiente -= descuento;
-          }
+          let descuento = Math.min(ganancia, saldoPendiente);
+          saldoPendiente -= descuento;
 
           acumulado += ganancia - descuento;
 
