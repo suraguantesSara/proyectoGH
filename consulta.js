@@ -27,10 +27,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         data.records.forEach((record, index) => {
           const ganancia = parseFloat(record.ganancia) || 0;
+          let descuento = Math.min(ganancia, saldoRestante);
+          saldoRestante -= descuento;
 
           if (saldoRestante > 0) {
-            let descuento = Math.min(ganancia, saldoRestante);
-            saldoRestante -= descuento;
             totalAcumulado = ganancia - saldoRestante;
           } else {
             totalAcumulado += ganancia; // Cuando el saldo llega a 0, la ganancia se acumula normalmente
@@ -42,6 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <td>${formatearMoneda(record.cantidadTotal)}</td>
             <td>${formatearMoneda(ganancia)}</td>
             <td>${formatearMoneda(totalAcumulado)}</td>
+            <td>${formatearMoneda(descuento)}</td>
             <td>${formatearMoneda(saldoRestante)}</td>
             <td>${formatearFecha(record.fechaRegistro)}</td>
           `;
