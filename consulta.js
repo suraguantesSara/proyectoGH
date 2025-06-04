@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
     window.location.replace("index.html");
     return;
   }
-
   document.getElementById("workerName").textContent = storedWorker;
 
   const url = "https://script.google.com/macros/s/AKfycbwRj9PuCnWGpxhWiXyhdcpP8WlYLIsMsbcE84yAuiWSFZyK8nsDus4SyJjur2le9Vv8/exec?worker=" + encodeURIComponent(storedWorker);
@@ -19,18 +18,24 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const tableBody = document.querySelector("#historyTable tbody");
-      tableBody.innerHTML = "";
+      tableBody.innerHTML = ""; 
 
-      const promedioInicial = parseFloat(document.getElementById("promedioInput").value) || 0;
-      let saldoPendiente = promedioInicial;
-      let acumulado = -promedioInicial;
+      let saldoPendiente = parseFloat(document.getElementById("promedioInput").value) || 0;
+      let acumulado = -saldoPendiente;
 
-      data.records.forEach((record, index) => {
+      data.records.forEach(record => {
         const ganancia = parseFloat(record.ganancia) || 0;
-        const descuento = Math.min(ganancia, saldoPendiente);
-        saldoPendiente -= descuento;
-        const neto = ganancia - descuento;
-        acumulado += neto;
+
+        // Calcular descuento a aplicar
+        let descuento = 0;
+        if (saldoPendiente > 0) {
+          descuento = Math.min(ganancia, saldoPendiente);
+          saldoPendiente -= descuento;
+        }
+
+        // Sumar al acumulado solo lo que realmente gana
+        const gananciaReal = ganancia - descuento;
+        acumulado += gananciaReal;
 
         const row = document.createElement("tr");
         row.innerHTML = `
@@ -47,37 +52,38 @@ document.addEventListener("DOMContentLoaded", () => {
     .catch(err => alert("Error al obtener datos: " + err));
 
   document.getElementById("updatePromedioBtn").addEventListener("click", () => {
-    let promedioInicial = parseFloat(document.getElementById("promedioInput").value) || 0;
-    let saldoPendiente = promedioInicial;
-    let acumulado = -promedioInicial;
+    let saldoPendiente = parseFloat(document.getElementById("promedioInput").value) || 0;
+    let acumulado = -saldoPendiente;
 
     const filas = document.querySelectorAll("#historyTable tbody tr");
-
     filas.forEach(row => {
-      const ganancia = parseFloat(row.cells[2].textContent.replace(/[^0-9.-]+/g, "")) || 0;
-      const descuento = Math.min(ganancia, saldoPendiente);
-      saldoPendiente -= descuento;
-      const neto = ganancia - descuento;
-      acumulado += neto;
+      const ganancia = parseFloat(row.cells[2].textContent.replace(/[^0-9.-]/g, "")) || 0;
+
+      let descuento = 0;
+      if (saldoPendiente > 0) {
+        descuento = Math.min(ganancia, saldoPendiente);
+        saldoPendiente -= descuento;
+      }
+
+      const gananciaReal = ganancia - descuento;
+      acumulado += gananciaReal;
 
       row.cells[4].textContent = formatearMoneda(descuento);
       row.cells[3].textContent = formatearMoneda(acumulado);
     });
 
-    alert("Promedio actualizado en la interfaz.");
+    alert("Promedio actualizado correctamente.");
   });
 });
 
+// Formatea moneda colombiana
 function formatearMoneda(valor) {
   return `$ ${Number(valor).toLocaleString("es-CO", { maximumFractionDigits: 0 })}`;
 }
 
+// Formatea fecha a dd/mm/yyyy
 function formatearFecha(fechaISO) {
   const fecha = new Date(fechaISO);
-  return fecha.toLocaleDateString("es-CO", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric"
-  });
+  return fecha.toLocaleDateString("es-CO");
 }
 
