@@ -7,73 +7,61 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   document.getElementById("workerName").textContent = storedWorker;
 
-  const url = "https://script.google.com/macros/s/AKfycbwRj9PuCnWGpxhWiXyhdcpP8WlYLIsMsbcE84yAuiWSFZyK8nsDus4SyJjur2le9Vv8/exec?worker=" + encodeURIComponent(storedWorker);
+  let deudaInicial = 0;
 
-  fetch(url)
-    .then(response => response.json())
-    .then(data => {
-      if (data.status === "ERROR") {
-        alert("Error al cargar registros: " + data.message);
-        return;
-      }
+  function cargarTabla() {
+    deudaInicial = parseFloat(document.getElementById("promedioInput").value) || 0;
+    let saldoPendiente = deudaInicial;
+    let acumulado = -deudaInicial;
 
-      const tableBody = document.querySelector("#historyTable tbody");
-      tableBody.innerHTML = ""; 
+    const url = "https://script.google.com/macros/s/AKfycbwRj9PuCnWGpxhWiXyhdcpP8WlYLIsMsbcE84yAuiWSFZyK8nsDus4SyJjur2le9Vv8/exec?worker=" + encodeURIComponent(storedWorker);
 
-      let saldoPendiente = parseFloat(document.getElementById("promedioInput").value) || 0;
-      let acumulado = -saldoPendiente;
-
-      data.records.forEach(record => {
-        const ganancia = parseFloat(record.ganancia) || 0;
-
-        // Calcular descuento a aplicar
-        let descuento = 0;
-        if (saldoPendiente > 0) {
-          descuento = Math.min(ganancia, saldoPendiente);
-          saldoPendiente -= descuento;
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === "ERROR") {
+          alert("Error al cargar registros: " + data.message);
+          return;
         }
 
-        // Sumar al acumulado solo lo que realmente gana
-        const gananciaReal = ganancia - descuento;
-        acumulado += gananciaReal;
+        const tableBody = document.querySelector("#historyTable tbody");
+        tableBody.innerHTML = "";
 
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${formatearFecha(record.fecha)}</td>
-          <td>${formatearMoneda(record.cantidadTotal)}</td>
-          <td>${formatearMoneda(ganancia)}</td>
-          <td>${formatearMoneda(acumulado)}</td>
-          <td>${formatearMoneda(descuento)}</td>
-          <td>${formatearFecha(record.fechaRegistro)}</td>
-        `;
-        tableBody.appendChild(row);
-      });
-    })
-    .catch(err => alert("Error al obtener datos: " + err));
+        data.records.forEach(record => {
+          const ganancia = parseFloat(record.ganancia) || 0;
+
+          let descuento = 0;
+          if (saldoPendiente > 0) {
+            descuento = Math.min(ganancia, saldoPendiente);
+            saldoPendiente -= descuento;
+          }
+
+          const gananciaReal = ganancia - descuento;
+          acumulado += gananciaReal;
+
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${formatearFecha(record.fecha)}</td>
+            <td>${formatearMoneda(record.cantidadTotal)}</td>
+            <td>${formatearMoneda(ganancia)}</td>
+            <td>${formatearMoneda(acumulado)}</td>
+            <td>${formatearMoneda(descuento)}</td>
+            <td>${formatearMoneda(saldoPendiente)}</td>
+            <td>${formatearFecha(record.fechaRegistro)}</td>
+          `;
+          tableBody.appendChild(row);
+        });
+      })
+      .catch(err => alert("Error al obtener datos: " + err));
+  }
 
   document.getElementById("updatePromedioBtn").addEventListener("click", () => {
-    let saldoPendiente = parseFloat(document.getElementById("promedioInput").value) || 0;
-    let acumulado = -saldoPendiente;
-
-    const filas = document.querySelectorAll("#historyTable tbody tr");
-    filas.forEach(row => {
-      const ganancia = parseFloat(row.cells[2].textContent.replace(/[^0-9.-]/g, "")) || 0;
-
-      let descuento = 0;
-      if (saldoPendiente > 0) {
-        descuento = Math.min(ganancia, saldoPendiente);
-        saldoPendiente -= descuento;
-      }
-
-      const gananciaReal = ganancia - descuento;
-      acumulado += gananciaReal;
-
-      row.cells[4].textContent = formatearMoneda(descuento);
-      row.cells[3].textContent = formatearMoneda(acumulado);
-    });
-
+    cargarTabla();
     alert("Promedio actualizado correctamente.");
   });
+
+  cargarTabla(); // Carga inicial
+
 });
 
 // Formatea moneda colombiana
