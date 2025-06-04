@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   document.getElementById("workerName").textContent = storedWorker;
 
-  const url = "https://script.google.com/macros/s/TU_URL_CORRECTA/exec?worker=" + encodeURIComponent(storedWorker);
+  const url = "https://script.google.com/macros/s/AKfycbwRj9PuCnWGpxhWiXyhdcpP8WlYLIsMsbcE84yAuiWSFZyK8nsDus4SyJjur2le9Vv8/exec?worker=" + encodeURIComponent(storedWorker);
 
   fetch(url)
     .then(response => response.json())
@@ -16,6 +16,8 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("Error al cargar registros: " + data.message);
         return;
       }
+
+      document.getElementById("promedioInput").value = data.saldoPendiente || 0;
 
       const tableBody = document.querySelector("#historyTable tbody");
       tableBody.innerHTML = ""; 
