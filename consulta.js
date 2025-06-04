@@ -21,23 +21,24 @@ document.addEventListener("DOMContentLoaded", () => {
       tableBody.innerHTML = ""; 
 
       let saldoPendiente = parseFloat(document.getElementById("promedioInput").value) || 0;
+      let acumuladoPrevio = -saldoPendiente; 
 
       data.records.forEach((record, index) => {
         const gananciaNum = parseFloat(record.ganancia) || 0;
-        const totalAcumuladoNum = (index === 0) ? -saldoPendiente : parseFloat(tableBody.lastChild.cells[3].textContent.replace(/[^0-9-]/g, "")) || 0;
-
-        // Se descuenta el promedio de la ganancia hasta que el saldo llegue a cero
+        
+        // Aplicar descuento progresivo en cada fila
         const descuento = Math.min(gananciaNum, saldoPendiente);
         saldoPendiente -= descuento;
 
-        const nuevoTotalAcumulado = totalAcumuladoNum + gananciaNum - descuento;
+        // Ajustar el acumulado tomando en cuenta la deuda pendiente
+        acumuladoPrevio += gananciaNum - descuento;
 
         const row = document.createElement("tr");
         row.innerHTML = `
           <td>${record.fecha}</td>
           <td>${formatearMoneda(record.cantidadTotal)}</td>
           <td>${formatearMoneda(gananciaNum)}</td>
-          <td>${formatearMoneda(nuevoTotalAcumulado)}</td>
+          <td>${formatearMoneda(acumuladoPrevio)}</td>
           <td>${formatearMoneda(descuento)}</td>
           <td>${record.fechaRegistro}</td>
         `;
@@ -47,7 +48,6 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .catch(err => alert("Error al obtener datos: " + err));
 
-  // Función para actualizar el promedio en la interfaz sin afectar Sheets
   document.getElementById("updatePromedioBtn").addEventListener("click", () => {
     let saldoPendiente = parseFloat(document.getElementById("promedioInput").value) || 0;
 
