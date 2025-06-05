@@ -37,14 +37,19 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const tableBody = document.querySelector("#historyTable tbody");
-        tableBody.innerHTML = ""; 
+        tableBody.innerHTML = "";
 
         data.records.forEach(record => {
           const ganancia = parseFloat(record.ganancia) || 0;
-          gananciaAcumulada += ganancia;
 
-          let descuento = saldoRestante > 0 ? Math.min(ganancia, saldoRestante) : 0;
-          saldoRestante -= descuento;
+          let descuento = 0;
+          if (saldoRestante > 0) {
+            descuento = Math.min(ganancia, saldoRestante);
+            saldoRestante -= descuento;
+          }
+
+          const gananciaFinal = ganancia - descuento;
+          gananciaAcumulada += gananciaFinal;
 
           const row = document.createElement("tr");
           row.innerHTML = `
