@@ -1,66 +1,74 @@
-let rows = [];
-let totalGanancia = 0;
-let promedioAuxiliar = 0;
-let actualizarPromedio = false;
+document.addEventListener("DOMContentLoaded", () => {
+  const storedWorker = localStorage.getItem("selectedWorker");
+  if (!storedWorker) {
+    alert("No hay trabajador seleccionado. Regresa a la página principal.");
+    window.location.replace("index.html");
+    return;
+  }
 
-function agregarFila() {
-    const gananciaInput = document.getElementById('ganancia');
-    const ganancia = parseFloat(gananciaInput.value);
-    if (isNaN(ganancia)) return;
+  document.getElementById("workerName").textContent = storedWorker;
 
-    totalGanancia += ganancia;
+  function formatearFecha(fechaISO) {
+    const fecha = new Date(fechaISO);
+    const dia = fecha.getDate().toString().padStart(2, "0");
+    const mes = (fecha.getMonth() + 1).toString().padStart(2, "0");
+    const anio = fecha.getFullYear();
+    return `${dia}/${mes}/${anio}`;
+  }
 
-    if (actualizarPromedio || rows.length === 0) {
-        promedioAuxiliar = totalGanancia;
-        actualizarPromedio = false;
-    }
+  function formatearMoneda(valor) {
+    return `$${valor.toFixed(2)}`;
+  }
 
-    const descuento = 0; // Por ahora fijo
-    const saldo = ganancia - descuento;
-    const acumulado = promedioAuxiliar;
+  function cargarTabla() {
+    let promedioIngresado = parseFloat(document.getElementById("promedioInput").value) || 0;
+    let saldoRestante = promedioIngresado;
+    let gananciaAcumulada = 0;
 
-    const nuevaFila = {
-        ganancia,
-        acumulado,
-        descuento,
-        saldo,
-        auxiliar: 0
-    };
+    const url = "https://script.google.com/macros/s/AKfycbwRj9PuCnWGpxhWiXyhdcpP8WlYLIsMsbcE84yAuiWSFZyK8nsDus4SyJjur2le9Vv8/exec?worker=" + encodeURIComponent(storedWorker);
 
-    rows.push(nuevaFila);
-    actualizarTabla();
-    gananciaInput.value = '';
-}
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === "ERROR") {
+          alert("Error al cargar registros: " + data.message);
+          return;
+        }
 
-function actualizarPromedioSwitch(valor) {
-    // valor viene como booleano (true o false)
-    actualizarPromedio = valor;
-}
+        const tableBody = document.querySelector("#historyTable tbody");
+        tableBody.innerHTML = "";
 
-function actualizarTabla() {
-    const tabla = document.getElementById('tablaBody');
-    tabla.innerHTML = '';
+        data.records.forEach((record) => {
+          const ganancia = parseFloat(record.ganancia) || 0;
+          gananciaAcumulada += ganancia;
 
-    const storedWorker = localStorage.getItem("selectedWorker");
-    if (!storedWorker) {
-        alert("No hay trabajador seleccionado. Regresa a la página principal.");
-        window.location.replace("index.html");
-        return;
-    }
-    document.getElementById("workerName").textContent = storedWorker;
+          let descuento = 0;
+          if (saldoRestante > 0) {
+            descuento = Math.min(ganancia, saldoRestante);
+            saldoRestante -= descuento;
+          }
 
-    rows.forEach((fila, index) => {
-        const tr = document.createElement('tr');
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${formatearFecha(record.fecha)}</td>
+            <td>${record.cantidadTotal}</td>
+            <td>${formatearMoneda(ganancia)}</td>
+            <td>${formatearMoneda(gananciaAcumulada)}</td>
+            <td>${formatearMoneda(descuento)}</td>
+            <td>${formatearMoneda(saldoRestante)}</td>
+            <td>${formatearFecha(record.fechaRegistro)}</td>
+          `;
+          tableBody.appendChild(row);
+        });
+      })
+      .catch(err => alert("Error al obtener datos: " + err));
+  }
 
-        tr.innerHTML = `
-            <td>${index + 1}</td>
-            <td>${fila.ganancia}</td>
-            <td>${fila.acumulado}</td>
-            <td>${fila.descuento}</td>
-            <td>${fila.saldo}</td>
-            <td>${fila.auxiliar}</td>
-        `;
+  document.getElementById("updatePromedioBtn").addEventListener("click", () => {
+    cargarTabla();
+    alert("Promedio actualizado correctamente.");
+  });
 
-        tabla.appendChild(tr);
-    });
-}
+  cargarTabla(); // Carga inicial
+});
+
