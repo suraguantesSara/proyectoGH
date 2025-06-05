@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administración de Usuarios</title>
+  <link rel="stylesheet" href="admin-usuarios.css">
+</head>
+<body>
+
+  <header class="top-bar">
+    <h1>Administración de Usuarios</h1>
+    <button onclick="window.location.href='index.html'" class="btn-back">Regresar</button>
+  </header>
+
+  <div class="admin-container">
+    <h2>Lista de Trabajadores</h2>
+    <div class="input-group">
+      <input type="text" id="workerNameInput" placeholder="Ingrese nombre">
+      <button onclick="agregarTrabajador()">Agregar Trabajador</button>
+    </div>
+
+    <ul id="workerList">
+      <!-- Los trabajadores se insertan aquí desde JavaScript -->
+    </ul>
+  </div>
+
+  <script src="admin-usuarios.js"></script>
+</body>
+</html>
