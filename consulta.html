@@ -24,36 +24,43 @@
     <main class="content">
       <h2>Registros de producción y saldo pendiente</h2>
 
-      <div class="input-card">
-        <h3>Agregar Promedio a Pagar</h3>
-        <input type="number" id="ganancia" placeholder="Ingresa ganancia">
-        <button onclick="agregarFila()">Agregar</button>
-      </div>
-
       <div class="promedio-card">
-        <h3>Actualizar Promedio</h3>
-        <p>Marca esta opción para recalcular el promedio.</p>
-        <label>
-          <input type="checkbox" id="promedioCheckbox" onchange="actualizarPromedioSwitch(this.checked)">
-          Recalcular promedio
-        </label>
+        <h3>Actualizar Promedio a Pagar</h3>
+        <p>Ingresa la cantidad que debe descontarse hasta que se complete el pago.</p>
+        <div class="input-group">
+          <input type="number" id="promedioInput" min="0" step="0.01" placeholder="Ingrese el promedio">
+          <button id="updatePromedioBtn">Guardar</button>
+        </div>
       </div>
 
       <table id="historyTable">
         <thead>
           <tr>
-            <th>#</th>
+            <th>Fecha</th>
+            <th>Cantidad Total</th>
             <th>Ganancia</th>
-            <th>Acumulado</th>
-            <th>Descuento</th>
-            <th>Saldo</th>
-            <th>Auxiliar</th>
+            <th>Total Acumulado</th>
+            <th>Promedio a pagar</th>
+            <th>Saldo Restante</th>
+            <th>Fecha de Registro</th>
+
           </tr>
+    <table id="historyTable">
+  <thead>
+    <tr>
+      <th>Fecha</th>
+      <th>Cantidad Total</th>
+      <th>Ganancia</th>
+      <th>Ganancia Acumulada</th>
+      <th>Descuento Aplicado</th>
+      <th>Saldo Restante</th>
+      <th>Fecha de Registro</th>
+    </tr>
         </thead>
-        <tbody id="tablaBody">
-          <!-- Datos generados por JS -->
+        <tbody>
+          <!-- Los datos se insertan aquí desde JavaScript -->
         </tbody>
-      </table>
+      </table>More actions
     </main>
   </div>
 
