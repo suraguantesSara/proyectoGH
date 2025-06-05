@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", cargarTrabajadores);
 
-const scriptURL = "https://script.google.com/macros/s/AKfycbyhjrYKWwbiGtjPT4WzX9vkR0PfI7o6M9-Wo3zDUwRrL56T05rHxKAWc8bryZdYDg9xjQ/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycby3lTyA8G0uAiw3chr30hPxkwA9_ZbbebShZg-MM0JvRqDZgbpoJk81TuVlO-fgbH5OsA/exec";
 
 function cargarTrabajadores() {
     fetch(`${scriptURL}?action=getWorkers`)
