@@ -177,7 +177,77 @@ body {
     text-align: center;
 }
 
-#adminBtn:disabled {
-    background: #aaa;
-    cursor: not-allowed;
+.admin-options button {
+    background-color: #007bff; /* Azul vibrante */
+    color: white;
+    font-size: 16px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.admin-options button:hover {
+    background-color: #0056b3; /* Azul más oscuro */
+    transform: scale(1.05); /* Efecto ligero de crecimiento */
+}
+
+.admin-options button:active {
+    background-color: #00408d; /* Azul profundo */
+    transform: scale(1); /* Evita exceso de transformación */
+}
+
+.admin-panel {
+    background-color: #f4f4f4;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.admin-options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+
+
+
+
+
+.admin-options button {
+    background-color: #007bff; /* Azul vibrante */
+    color: white;
+    font-size: 16px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.admin-options button:hover {
+    background-color: #0056b3; /* Azul más oscuro */
+    transform: scale(1.05); /* Efecto ligero de crecimiento */
+}
+
+.admin-options button:active {
+    background-color: #00408d; /* Azul profundo */
+    transform: scale(1); /* Evita exceso de transformación */
+}
+
+.admin-panel {
+    background-color: #f4f4f4;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.admin-options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
 }
