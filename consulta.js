@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function cargarTabla() {
     let promedioIngresado = parseFloat(document.getElementById("promedioInput").value) || 0;
     let saldoRestante = promedioIngresado;
-    let totalAcumulado = -saldoRestante; // Comienza reflejando la deuda pendiente
+    let totalAcumulado = -saldoRestante;
 
     const url = "https://script.google.com/macros/s/AKfycbwRj9PuCnWGpxhWiXyhdcpP8WlYLIsMsbcE84yAuiWSFZyK8nsDus4SyJjur2le9Vv8/exec?worker=" + encodeURIComponent(storedWorker);
 
@@ -25,16 +25,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const tableBody = document.querySelector("#historyTable tbody");
         tableBody.innerHTML = ""; 
 
-        data.records.forEach((record, index) => {
+        data.records.forEach((record) => {
           const ganancia = parseFloat(record.ganancia) || 0;
-          let descuento = Math.min(ganancia, saldoRestante);
+          
+          // Aplicación de las fórmulas de Excel en código
+          let descuento = saldoRestante < ganancia ? saldoRestante : ganancia;
           saldoRestante -= descuento;
 
-          if (saldoRestante > 0) {
-            totalAcumulado = ganancia - saldoRestante;
-          } else {
-            totalAcumulado += ganancia; // Una vez que el saldo llega a 0, se acumula normalmente
-          }
+          totalAcumulado = saldoRestante > 0 ? saldoRestante : 0;
 
           const row = document.createElement("tr");
           row.innerHTML = `
