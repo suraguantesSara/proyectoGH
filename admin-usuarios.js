@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", cargarTrabajadores);
 
-// ✅ Cambia esta URL por la de tu nueva implementación desplegada
+// ✅ URL actualizada con la implementación correcta
 const scriptURL = "https://script.google.com/macros/s/AKfycbyjrpkFWU2Nf22yJiY_WRVTU33YMvp0S6Nx66to21ARSFDoSU59PUAbMzXC0DZWAildxw/exec";
 
 function cargarTrabajadores() {
