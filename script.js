@@ -30,7 +30,7 @@ const workers = [
   { nombre: "Nancy Arias",      area: "Armado",   genero: "mujer"  },
   { nombre: "Karolie Luna",     area: "Armado",   genero: "mujer"  },
   { nombre: "Amanda Cardona",   area: "Armado",   genero: "mujer"  },
-  { nombre: "Alexander Moran",  area: "Armado",   genero: "hombre" },
+  { nombre: "Paola Diaz",       area: "Armado",   genero: "mujer"  },
   { nombre: "Blanca Andrade",   area: "Armado",   genero: "mujer"  }
 ];
 
