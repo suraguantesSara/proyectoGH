@@ -31,7 +31,8 @@ const workers = [
   { nombre: "Karolie Luna",     area: "Armado",   genero: "mujer"  },
   { nombre: "Amanda Cardona",   area: "Armado",   genero: "mujer"  },
   { nombre: "Paola Diaz",       area: "Armado",   genero: "mujer"  },
-  { nombre: "Blanca Andrade",   area: "Armado",   genero: "mujer"  }
+  { nombre: "Blanca Andrade",   area: "Armado",   genero: "mujer"  },
+  { nombre: "Marcela Escobar",  area: "Armado",   genero: "mujer"  }
 ];
 
 // ─── INICIALIZACIÓN AL CARGAR ───────────────────────────────────────────────────
