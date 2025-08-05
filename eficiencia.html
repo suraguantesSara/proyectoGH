@@ -1,0 +1,41 @@
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eficiencia Diaria</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #f4f4f4; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
+    th { background: #333; color: white; }
+    .low-efficiency { background-color: #ffcccc; }
+    .high-efficiency { background-color: #d4edda; }
+    input { width: 100px; padding: 5px; }
+    .error { color: red; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <h1>Control de Eficiencia Diaria</h1>
+  <p>Ingresa la referencia y la cantidad (docenas) por trabajador. El sistema verificará el tiempo estimado y calculará la eficiencia.</p>
+
+  <label for="daySelect">Día de la semana:</label>
+  <select id="daySelect">
+    <option value="480">Lunes a Viernes</option>
+    <option value="285">Sábado</option>
+  </select>
+
+  <table id="efficiencyTable">
+    <thead>
+      <tr>
+        <th>Trabajador</th>
+        <th>Referencia</th>
+        <th>Docenas</th>
+        <th>Eficiencia</th>
+        <th>Mensaje</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+  </body>
+</html>
+
