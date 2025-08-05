@@ -1,41 +1,73 @@
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Eficiencia Diaria</title>
+  <title>Eficiencia Operativa</title>
   <style>
-    body { font-family: Arial; padding: 20px; background: #f4f4f4; }
+    body { font-family: Arial; margin: 0; padding: 0; background: #f4f4f4; }
+    header { background: #333; color: white; padding: 15px; text-align: center; font-size: 24px; }
+    .container { padding: 20px; }
+    .hidden { display: none; }
+    button { padding: 10px 15px; font-size: 16px; margin: 10px; cursor: pointer; }
     table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-    th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
-    th { background: #333; color: white; }
-    .low-efficiency { background-color: #ffcccc; }
-    .high-efficiency { background-color: #d4edda; }
-    input { width: 100px; padding: 5px; }
-    .error { color: red; font-size: 14px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    th { background-color: #333; color: white; }
+    .low { background: #ffcccc; }
+    .high { background: #d4edda; }
+    input { width: 100px; }
+    .select-btn { margin: 5px 0; display: block; }
+    .back-btn { background: #ccc; }
   </style>
 </head>
 <body>
-  <h1>Control de Eficiencia Diaria</h1>
-  <p>Ingresa la referencia y la cantidad (docenas) por trabajador. El sistema verificará el tiempo estimado y calculará la eficiencia.</p>
+  <header>Eficiencia Operativa</header>
+  <div class="container">
 
-  <label for="daySelect">Día de la semana:</label>
-  <select id="daySelect">
-    <option value="480">Lunes a Viernes</option>
-    <option value="285">Sábado</option>
-  </select>
+    <!-- PANTALLA 1: Selección de trabajador -->
+    <div id="selectScreen">
+      <h2>Selecciona un trabajador</h2>
+      <div id="workerButtons"></div>
+      <button onclick="showHistory()">Ver Historial</button>
+    </div>
 
-  <table id="efficiencyTable">
-    <thead>
-      <tr>
-        <th>Trabajador</th>
-        <th>Referencia</th>
-        <th>Docenas</th>
-        <th>Eficiencia</th>
-        <th>Mensaje</th>
-      </tr>
-    </thead>
-    <tbody id="tableBody"></tbody>
-  </table>
+    <!-- PANTALLA 2: Registro de eficiencia -->
+    <div id="efficiencyScreen" class="hidden">
+      <button class="back-btn" onclick="goBack()">⬅ Atrás</button>
+      <h3>Trabajador: <span id="selectedWorker"></span></h3>
+      <label>Fecha: <input type="date" id="effDate"></label>
+      <label>Minutos trabajados:
+        <select id="workMinutes">
+          <option value="480">480 (Lunes a Viernes)</option>
+          <option value="285">285 (Sábado)</option>
+        </select>
+      </label>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th><th>Referencia</th><th>Cantidad</th><th>Min. Ref</th><th>Eficiencia</th><th>Mensaje</th>
+          </tr>
+        </thead>
+        <tbody id="entryTable"></tbody>
+      </table>
+      <button onclick="saveEntries()">Guardar Registro</button>
+    </div>
+
+    <!-- PANTALLA 3: Historial -->
+    <div id="historyScreen" class="hidden">
+      <button class="back-btn" onclick="goBack()">⬅ Atrás</button>
+      <h2>Historial de Eficiencia</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha</th><th>Trabajador</th><th>Referencias</th><th>Promedio</th>
+          </tr>
+        </thead>
+        <tbody id="historyTable"></tbody>
+      </table>
+    </div>
+
+  </div>
     <script src="eficiencia.js"></script>
   </body>
 </html>
