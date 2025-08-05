@@ -131,6 +131,26 @@ function viewData() {
   window.location.href = `consulta.html?worker=${encodeURIComponent(storedWorker)}`;
 }
 
+
+//Redirigir a eficiencias ____________________________________________________________
+function checkEfficiency() {
+  const stored = localStorage.getItem("selectedWorker");
+  if (!stored) {
+    alert("Selecciona un trabajador primero.");
+    return;
+  }
+  // Redirigir al archivo eficiencia.html
+  window.location.href = "eficiencia.html?worker=" + encodeURIComponent(stored);
+}
+
+function generateReport() {
+  const stored = localStorage.getItem("selectedWorker");
+  if (!stored) {
+    alert("Selecciona un trabajador primero.");
+    return;
+  }
+  alert(`Informe quincenal de ${stored}`);
+}
+
 // ─── OTRAS FUNCIONES (sólo alert por ahora) ───────────────────────────────────
-function checkEfficiency(){ alert(`Eficiencia de ${workerNameEl.textContent}`); }
 function generateReport() { alert(`Informe quincenal de ${workerNameEl.textContent}`); }
