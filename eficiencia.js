@@ -1,14 +1,16 @@
 const referencias = {
-  "C2D + PLUS": 30.0,
-  "D2-2 TP C/CH UÑAS": 73.2,
-  "C2PC-5(15)OJ ALUM sin pegar ojalete": 82.3,
-  "C1D-2 TIPO PISTOLA": 73.2,
-  "REMACHADA DE GUANTE": 45.0
+  "4111":30, "9394": 73.2, "10369": 82.3
+  
 };
 
 const trabajadores = [
   "Luis Oliveros", "Fernando Arias", "Jesus Arteaga",
-  "Nataly Rodriguez", "Angela Pacheco", "Alex (nuevo)"
+  "Nataly Rodriguez", "Angela Pacheco", "Alex (nuevo)",
+  "Gustavo Alvarado", "Kevin Lozano", "Blanca Andrade",
+  "Carlos Caicedo", "Johana Zuñiga", "Claudia Gonzales",
+  "Amanda Cardona", "Solveida Gesama","Paola Diaz",            
+  "Marcela Escobar", "David Parra", "Karoline Luna",
+  "Liliana Diaz", "Nancy Areas"
 ];
 
 let currentWorker = null;
