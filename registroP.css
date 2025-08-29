@@ -134,3 +134,27 @@ input[type="number"] {
 .btn-save:hover {
   background: #218838;
 }
+
+/* 🔹 NUEVOS ESTILOS PARA EFICIENCIA */
+
+/* Celda de eficiencia OK */
+.efficiency-ok {
+  background: #d4edda;  /* verde claro */
+  color: #155724;       /* verde oscuro */
+  font-weight: bold;
+}
+
+/* Celda de eficiencia BAJA */
+.efficiency-low {
+  background: #f8d7da;  /* rojo claro */
+  color: #721c24;       /* rojo oscuro */
+  font-weight: bold;
+}
+
+/* Total de eficiencia */
+#grandEfficiency {
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
