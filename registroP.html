@@ -20,8 +20,8 @@
         <img src="https://www.w3schools.com/howto/img_avatar.png" alt="Avatar">
         <p id="workerInSidebar">—</p>
       </div>
-   <h2>Sistema de Totales Diario</h2>
-<button><a href="index.html">Atrás</a></button>
+      <h2>Sistema de Totales Diario</h2>
+      <button><a href="index.html">Atrás</a></button>
       <ul id="workerList"></ul>
     </aside>
 
@@ -43,6 +43,9 @@
               <th>Cantidad</th>
               <th>Valor unitario</th>
               <th>Total</th>
+              <!-- 🔹 NUEVAS COLUMNAS -->
+              <th>Tiempo/ref (min)</th>
+              <th>Eficiencia (%)</th>
             </tr>
           </thead>
           <tbody>
@@ -56,6 +59,12 @@
         <strong id="grandTotal">0.00</strong>
       </div>
 
+      <!-- 🔹 NUEVO: Fila para eficiencia total -->
+      <div class="total-row">
+        <span>Eficiencia Total:</span>
+        <strong id="grandEfficiency">0%</strong>
+      </div>
+
       <button id="saveBtn" class="btn-save">Guardar Registro</button>
     </main>
   </div>
@@ -63,3 +72,4 @@
   <script src="registroP.js"></script>
 </body>
 </html>
+
