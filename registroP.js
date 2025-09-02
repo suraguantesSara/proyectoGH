@@ -31,11 +31,30 @@ document.addEventListener("DOMContentLoaded", () => {
     "11100": 881, "2730":25, "935":8.5, "385": 3.5
   };
 
-  let minutosDia = 480; // por defecto entre semana
-  dateInput.addEventListener("change", () => {
-    const day = new Date(dateInput.value).getDay();
-    minutosDia = (day === 6) ? 285 : 480; // sábado = 6
+let minutosDia = 480; // por defecto entre semana
+
+// 🔹 Función que revisa si la fecha es sábado
+function actualizarMinutosPorDia() {
+  const day = new Date(dateInput.value).getDay();
+  minutosDia = (day === 6) ? 285 : 480; // sábado = 6
+}
+
+// Ejecutar al inicio
+actualizarMinutosPorDia();
+
+// Volver a calcular si cambian la fecha
+dateInput.addEventListener("change", () => {
+  actualizarMinutosPorDia();
+  // recalcula todas las filas con el nuevo valor de minutos
+  tbody.querySelectorAll("tr").forEach(row => {
+    const qty = parseFloat(row.cells[1].querySelector("input").value) || 0;
+    const val = row.cells[2].querySelector("input").value.trim();
+    if (qty > 0 && val) {
+      updateRow.call(row.cells[1].querySelector("input")); 
+    }
   });
+});
+
 
   // ─── 4) GENERAR 12 FILAS DE ENTRADA ────────────────────────────────────────
   const tbody = document.querySelector("#productionTable tbody");
